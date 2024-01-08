@@ -1,0 +1,22 @@
+----Estructura de la API--------
+
+//Services
+-ViewModel
+-Interfaz
+-Servicio
+
+//Controllers
+-Controllers
+
+//Data
+-Maps
+-Entities
+-BbContext
+-Repository
+
+//Migrations
+-Migrations
+
+//Utilidades (codigos reutilizables)
+-Mensajes de salida
+
