@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:app_loteria/screens/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,12 +8,67 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'package:app_loteria/utils/ColorPalette.dart';
 import 'package:google_fonts/google_fonts.dart';
-//import 'package:simexpro/api.dart';
-//import 'package:simexpro/toastconfig/toastconfig.dart';
+import 'package:app_loteria/api.dart';
+import 'package:app_loteria/toastconfig/toastconfig.dart';
 
 class loginScreen extends StatefulWidget {
   @override
   State<loginScreen> createState() => _loginScreenState();
+}
+
+
+Future<void> fetchData(
+    BuildContext context, String username, String password) async {
+  try {
+     Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => HomeScreen(),
+      ),
+    );
+          
+    // final tarea = {'usua_Nombre': username, 'usua_Contrasenia': password};
+    // final jsonTarea = jsonEncode(tarea);
+    // final response = await http.post(
+    //   Uri.parse('${apiUrl}Usuarios/Login'),
+    //   headers: {
+    //     'XApiKey': apiKey,
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: jsonTarea,
+    // );
+    // if (response.statusCode == 200) {
+    //   print(response);
+    //   final decodedJson = jsonDecode(response.body);
+    //   final data = decodedJson["data"];
+    //   print(data);
+    //   SharedPreferences prefs = await SharedPreferences.getInstance();
+    //   prefs.setInt('usua_Id', data['usua_Id']);
+    //   prefs.setString('username', data['usua_Nombre']);
+    //   prefs.setString('email', data['empl_CorreoElectronico']);
+    //   prefs.setString('userfullname', data['emplNombreCompleto']);
+    //   prefs.setString('rol', data['role_Descripcion']);
+    //   prefs.setBool('esAduana', data['empl_EsAduana']);
+    //   prefs.setString('image', data['usua_Image']);
+     
+    // } else {
+    //   CherryToast.error(
+    //     title: Text('El usuario o contraseña son incorrectos',
+    //         style: TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+    //         textAlign: TextAlign.justify),
+    //     borderRadius: 5,
+    //   ).show(context);
+    // }
+  } catch (e) {
+    if (e.toString().contains('Failed host lookup')) {
+      CherryToast.error(
+        title: Text('No se pudo conectar al servidor',
+            style: TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+            textAlign: TextAlign.justify),
+        borderRadius: 5,
+      ).show(context);
+    }
+  }
 }
 
 
@@ -32,7 +88,7 @@ class _loginScreenState extends State<loginScreen> {
           child: SafeArea(
             child: Container(
               alignment: Alignment.center,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage("images/Wallpaper_Login.jpg"),
                   fit: BoxFit.cover,
@@ -41,9 +97,9 @@ class _loginScreenState extends State<loginScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     child: Card(
-                      color: Color.fromARGB(0, 0, 0, 0),
+                      color: const Color.fromARGB(0, 0, 0, 0),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
@@ -57,7 +113,7 @@ class _loginScreenState extends State<loginScreen> {
                             ),
                           ),
                           Padding(
-                              padding: EdgeInsets.all(18),
+                              padding: const EdgeInsets.all(18),
                               child: Text(
                                 'INICIO DE SESIÓN',
                                 style: GoogleFonts.dongle(
@@ -76,16 +132,17 @@ class _loginScreenState extends State<loginScreen> {
                                 });
                               },
                               decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
+                                enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
-                                focusedBorder: OutlineInputBorder(
+                                focusedBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
                                 label: Text("Usuario",
-                                    style: GoogleFonts.dongle(color: Colors.white)),
+                                    style: GoogleFonts.dongle(
+                                        color: Colors.white)),
                                 prefixIcon:
-                                    Icon(Icons.person, color: Colors.white),
+                                    const Icon(Icons.person, color: Colors.white),
                               ),
                               style: GoogleFonts.dongle(color: Colors.white),
                             ),
@@ -100,16 +157,17 @@ class _loginScreenState extends State<loginScreen> {
                               },
                               obscureText: passToggle ? true : false,
                               decoration: InputDecoration(
-                                enabledBorder: OutlineInputBorder(
+                                enabledBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
-                                focusedBorder: OutlineInputBorder(
+                                focusedBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
                                 label: Text("Contraseña",
-                                    style: GoogleFonts.dongle(color: Colors.white)),
+                                    style: GoogleFonts.dongle(
+                                        color: Colors.white)),
                                 prefixIcon:
-                                    Icon(Icons.key, color: Colors.white),
+                                    const Icon(Icons.key, color: Colors.white),
                                 suffixIcon: InkWell(
                                   onTap: () {
                                     if (passToggle == true) {
@@ -120,9 +178,9 @@ class _loginScreenState extends State<loginScreen> {
                                     setState(() {});
                                   },
                                   child: passToggle
-                                      ? Icon(CupertinoIcons.eye_slash_fill,
+                                      ? const Icon(CupertinoIcons.eye_slash_fill,
                                           color: Colors.white)
-                                      : Icon(CupertinoIcons.eye_fill,
+                                      : const Icon(CupertinoIcons.eye_fill,
                                           color: Colors.white),
                                 ),
                               ),
@@ -130,7 +188,7 @@ class _loginScreenState extends State<loginScreen> {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.only(left: 15, right: 15),
+                            padding: const EdgeInsets.only(left: 15, right: 15),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -162,28 +220,28 @@ class _loginScreenState extends State<loginScreen> {
                               onTap: () {
                                 if (username.isNotEmpty &&
                                     password.isNotEmpty) {
-                                  // fetchData(context, username, password);
+                                   fetchData(context, username, password);
                                 } else {
-                                  // CherryToast.warning(
-                                  //   title: Text(
-                                  //       'Llene los campos correctamente',
-                                  //       style: TextStyle(
-                                  //           color: Color.fromARGB(
-                                  //               255, 226, 226, 226)),
-                                  //       textAlign: TextAlign.justify),
-                                  //   borderRadius: 5,
-                                  // ).show(context);
+                                  CherryToast.warning(
+                                    title: const Text(
+                                        'Llene los campos correctamente',
+                                        style: TextStyle(
+                                            color: Color.fromARGB(
+                                                255, 226, 226, 226)),
+                                        textAlign: TextAlign.justify),
+                                    borderRadius: 5,
+                                  ).show(context);
                                 }
                               },
                               child: Container(
-                                padding: EdgeInsets.symmetric(
+                                padding: const EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 20),
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                   color: ColorPalette.primaryColorApp,
                                   borderRadius: BorderRadius.circular(8),
                                   boxShadow: [
-                                    BoxShadow(
+                                    const BoxShadow(
                                       color: Colors.black12,
                                       blurRadius: 4,
                                       spreadRadius: 2,
@@ -207,7 +265,7 @@ class _loginScreenState extends State<loginScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 200),
+                  const SizedBox(height: 200),
                 ],
               ),
             ),
