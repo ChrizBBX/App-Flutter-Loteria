@@ -1,7 +1,8 @@
 import 'package:app_loteria/utils/ColorPalette.dart';
 import 'package:flutter/material.dart';
 
-class AppBarWithBackButton extends StatelessWidget implements PreferredSizeWidget {
+class AppBarWithBackButton extends StatelessWidget
+    implements PreferredSizeWidget {
   final String title;
   final String profileImageUrl;
   final VoidCallback onProfilePressed;
@@ -19,6 +20,7 @@ class AppBarWithBackButton extends StatelessWidget implements PreferredSizeWidge
       title: Text(
         title,
         style: TextStyle(
+          fontFamily: 'RobotoMono',
           color: Colors.white,
         ),
       ),
@@ -33,9 +35,7 @@ class AppBarWithBackButton extends StatelessWidget implements PreferredSizeWidge
         PopupMenuButton<String>(
           onSelected: (value) {
             if (value == 'mi_perfil') {
-              
             } else if (value == 'cerrar_sesion') {
-             
               Navigator.pushReplacementNamed(context, '/login');
             }
           },
@@ -80,7 +80,8 @@ class AppBarWithBackButton extends StatelessWidget implements PreferredSizeWidge
   Size get preferredSize => Size.fromHeight(kToolbarHeight);
 }
 
-class AppBarWithoutBackButton extends StatelessWidget implements PreferredSizeWidget {
+class AppBarWithoutBackButton extends StatelessWidget
+    implements PreferredSizeWidget {
   final String imageUrl;
   final String profileImageUrl;
   final VoidCallback onProfilePressed;
@@ -106,10 +107,9 @@ class AppBarWithoutBackButton extends StatelessWidget implements PreferredSizeWi
         PopupMenuButton<String>(
           onSelected: (value) {
             if (value == 'mi_perfil') {
-              
             } else if (value == 'cerrar_sesion') {
-              
-              Navigator.pushReplacementNamed(context, '/login'); // Ajusta la ruta según tu implementación
+              Navigator.pushReplacementNamed(
+                  context, '/login'); // Ajusta la ruta según tu implementación
             }
           },
           itemBuilder: (context) => [

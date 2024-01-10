@@ -20,6 +20,7 @@ class _NavBarRootsState extends State<NavBarRoots> {
       selectedItemColor: Color.fromRGBO(255, 255, 255, 1),
       unselectedItemColor: Color.fromARGB(130, 255, 255, 255),
       selectedLabelStyle: TextStyle(
+        fontFamily: 'RobotoMono',
         fontWeight: FontWeight.bold,
         fontSize: 15,
       ),
@@ -27,16 +28,16 @@ class _NavBarRootsState extends State<NavBarRoots> {
       onTap: widget.onTabTapped,
       items: [
         BottomNavigationBarItem(
-          icon: Icon(Icons.home_filled),
-          label: "Inicio",
-        ),
-        BottomNavigationBarItem(
           icon: Icon(Icons.add_shopping_cart),
-          label: "Nueva Compra",
+          label: "Nueva Venta",
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.home_filled),
           label: "Inicio",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.pin),
+          label: "Números",
         ),
       ],
     );

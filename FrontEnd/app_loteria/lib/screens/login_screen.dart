@@ -16,17 +16,16 @@ class loginScreen extends StatefulWidget {
   State<loginScreen> createState() => _loginScreenState();
 }
 
-
 Future<void> fetchData(
     BuildContext context, String username, String password) async {
   try {
-     Navigator.pushReplacement(
+    Navigator.pushReplacement(
       context,
       MaterialPageRoute(
         builder: (context) => HomeScreen(),
       ),
     );
-          
+
     // final tarea = {'usua_Nombre': username, 'usua_Contrasenia': password};
     // final jsonTarea = jsonEncode(tarea);
     // final response = await http.post(
@@ -50,7 +49,7 @@ Future<void> fetchData(
     //   prefs.setString('rol', data['role_Descripcion']);
     //   prefs.setBool('esAduana', data['empl_EsAduana']);
     //   prefs.setString('image', data['usua_Image']);
-     
+
     // } else {
     //   CherryToast.error(
     //     title: Text('El usuario o contraseña son incorrectos',
@@ -61,7 +60,7 @@ Future<void> fetchData(
     // }
   } catch (e) {
     if (e.toString().contains('Failed host lookup')) {
-      CherryToast.error(
+      CherryToast.warning(
         title: Text('No se pudo conectar al servidor',
             style: TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
             textAlign: TextAlign.justify),
@@ -70,12 +69,11 @@ Future<void> fetchData(
     }
   }
 }
-
-
 class _loginScreenState extends State<loginScreen> {
   bool passToggle = true;
   String username = '';
   String password = '';
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -97,7 +95,7 @@ class _loginScreenState extends State<loginScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(20),
+                    padding: EdgeInsets.all(20),
                     child: Card(
                       color: const Color.fromARGB(0, 0, 0, 0),
                       shape: RoundedRectangleBorder(
@@ -105,23 +103,29 @@ class _loginScreenState extends State<loginScreen> {
                       ),
                       child: Column(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(top: 5),
-                            child: Image.asset(
-                              "images/LogoBlanco.png",
-                              height: 230,
+                          Container(
+                            height: MediaQuery.of(context).size.height * 0.4,
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 5),
+                              child: Image.asset(
+                                "images/LogoBlanco.png",
+                                height: 230,
+                              ),
                             ),
                           ),
                           Padding(
-                              padding: const EdgeInsets.all(18),
-                              child: Text(
-                                'INICIO DE SESIÓN',
-                                style: GoogleFonts.dongle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 40,
-                                  color: ColorPalette.whiteColor,
-                                ),
-                              )),
+                            padding: const EdgeInsets.all(18),
+                            child: Text(
+                              'INICIO DE SESIÓN',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontFamily: 'RobotoMono',
+                                fontSize: 25,
+                                color: ColorPalette.whiteColor,
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: 20.0),
                           Padding(
                             padding: const EdgeInsets.only(
                                 right: 18, left: 18, bottom: 18),
@@ -139,12 +143,11 @@ class _loginScreenState extends State<loginScreen> {
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
                                 label: Text("Usuario",
-                                    style: GoogleFonts.dongle(
-                                        color: Colors.white)),
-                                prefixIcon:
-                                    const Icon(Icons.person, color: Colors.white),
+                                    style: TextStyle(color: Colors.white)),
+                                prefixIcon: const Icon(Icons.person,
+                                    color: Colors.white),
                               ),
-                              style: GoogleFonts.dongle(color: Colors.white),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                           Padding(
@@ -164,8 +167,7 @@ class _loginScreenState extends State<loginScreen> {
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
                                 label: Text("Contraseña",
-                                    style: GoogleFonts.dongle(
-                                        color: Colors.white)),
+                                    style: TextStyle(color: Colors.white)),
                                 prefixIcon:
                                     const Icon(Icons.key, color: Colors.white),
                                 suffixIcon: InkWell(
@@ -178,17 +180,19 @@ class _loginScreenState extends State<loginScreen> {
                                     setState(() {});
                                   },
                                   child: passToggle
-                                      ? const Icon(CupertinoIcons.eye_slash_fill,
+                                      ? const Icon(
+                                          CupertinoIcons.eye_slash_fill,
                                           color: Colors.white)
                                       : const Icon(CupertinoIcons.eye_fill,
                                           color: Colors.white),
                                 ),
                               ),
-                              style: GoogleFonts.dongle(color: Colors.white),
+                              style: TextStyle(color: Colors.white),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.only(left: 15, right: 15),
+                            padding: const EdgeInsets.only(
+                                left: 15, right: 15, bottom: 15),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -198,14 +202,15 @@ class _loginScreenState extends State<loginScreen> {
                                     //   context,
                                     //   MaterialPageRoute(
                                     //     builder: (context) =>
-                                    //       RecoverPasswordScreen(),
+                                    //         RecoverPasswordScreen(),
                                     //   ),
                                     // );
                                   },
                                   child: Text(
                                     "¿Contraseña olvidada?",
-                                    style: GoogleFonts.dongle(
-                                      fontSize: 20,
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontFamily: 'RobotoMono',
                                       fontWeight: FontWeight.normal,
                                       color: ColorPalette.whiteColor,
                                     ),
@@ -251,9 +256,10 @@ class _loginScreenState extends State<loginScreen> {
                                 child: Center(
                                   child: Text(
                                     "Iniciar sesión",
-                                    style: GoogleFonts.dongle(
-                                      fontSize: 25,
+                                    style: TextStyle(
+                                      fontSize: 18,
                                       fontWeight: FontWeight.bold,
+                                      fontFamily: 'RobotoMono',
                                       color: Colors.white,
                                     ),
                                   ),
@@ -261,11 +267,11 @@ class _loginScreenState extends State<loginScreen> {
                               ),
                             ),
                           ),
+                          const SizedBox(height: 50),
                         ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: 200),
                 ],
               ),
             ),

@@ -1,5 +1,5 @@
 name: app_loteria
-description: A new Flutter project.
+description: A new  Flutter project.
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -39,6 +39,7 @@ dependencies:
   http: ^0.13.6
   google_fonts: ^4.0.4
   cherry_toast: ^1.6.4
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:
