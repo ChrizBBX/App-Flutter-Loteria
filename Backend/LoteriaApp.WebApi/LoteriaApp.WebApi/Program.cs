@@ -1,3 +1,7 @@
+using LoteriaApp.WebApi.Data;
+using LoteriaApp.WebApi.Services.Usuarios;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +10,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+var connectionString = builder.Configuration.GetConnectionString("ConexionProyecto");
+builder.Services.AddDbContext<LoteriaContext>(options => options.UseSqlServer(connectionString));
+builder.Services.AddTransient<UsuarioService>();
+builder.Services.AddTransient<UsuarioRules>();
 
 var app = builder.Build();
 

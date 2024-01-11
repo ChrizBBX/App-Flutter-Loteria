@@ -41,8 +41,47 @@ CONSTRAINT FK_MetodosPago_UsuarioModificacion_Usuarios_UsuarioId FOREIGN KEY (Us
 CONSTRAINT UQ_MetodosPago_Descripcion UNIQUE (Descripcion)
 )
 
+CREATE TABLE Membresias
+(
+MembresiaId INT IDENTITY(1,1),
+Descripcion VARCHAR(300) NOT NULL,
+Precio		DECIMAL(18,2),
 
+UsuarioCreacion     INT             NOT NULL,
+FechaCreacion       DATETIME        NOT NULL,
+UsuarioModificacion INT,
+FechaModificacion   DATETIME,
+Estado              BIT             DEFAULT 1
 
+CONSTRAINT PK_Membresias_MembresiaId PRIMARY KEY(MembresiaId),
+CONSTRAINT FK_Membresias_UsuarioCreacion_Usuarios_UsuarioId FOREIGN KEY (UsuarioCreacion) REFERENCES Usuarios (UsuarioId),
+CONSTRAINT FK_Membresias_UsuarioModificacionn_Usuarios_UsuarioId FOREIGN KEY (UsuarioModificacion) REFERENCES Usuarios (UsuarioId)
+)
+
+CREATE TABLE Pagos
+(
+PagoId INT IDENTITY(1,1),
+UsuarioId INT NOT NULL,
+MembresiaId INT NOT NULL,
+MetodoPagoId INT NOT NULL,
+AutoRenovable BIT,
+FechaVencimiento DateTime NOT NULL,
+
+UsuarioCreacion     INT             NOT NULL,
+FechaCreacion       DATETIME        NOT NULL,
+UsuarioModificacion INT,
+FechaModificacion   DATETIME,
+Estado              BIT             DEFAULT 1
+
+CONSTRAINT PK_Pagos_PagoId PRIMARY KEY (PagoId),
+CONSTRAINT FK_Pagos_UsuarioId_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES Usuarios (UsuarioId),
+CONSTRAINT FK_Pagos_MetodoPagoId_MetodosPago_MetodoPagoId FOREIGN KEY (MetodoPagoId) REFERENCES MetodosPago (MetodoPagoId),
+CONSTRAINT FK_Pagos_MebresiaId_Membresias_MembresiaId FOREIGN KEY (MembresiaId) REFERENCES Membresias (MembresiaId),
+CONSTRAINT FK_Pagos_UsuarioCreacion_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES Usuarios (UsuarioId),
+CONSTRAINT FK_Pagos_UsuarioModificacion_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES Usuarios (UsuarioId)
+)
+
+GO
 
 CREATE TABLE Personas
 (
