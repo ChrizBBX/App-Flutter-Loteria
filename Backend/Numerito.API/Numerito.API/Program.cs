@@ -11,6 +11,16 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
+
 var connectionString = builder.Configuration.GetConnectionString("ConexionProyecto");
 builder.Services.AddDbContext<NumeritoContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddTransient<UsuarioService>();
