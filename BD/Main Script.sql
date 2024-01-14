@@ -183,7 +183,7 @@ CREATE TABLE Ventas
     PersonaId               INT NOT NULL,
     UsuarioId               INT NOT NULL,
     MetodoPagoId            INT NOT NULL,
-    FechaVenta             DATETIME NOT NULL,
+    FechaVenta				DATETIME NOT NULL,
     
     UsuarioCreacion         INT                 NOT NULL,
     FechaCreacion           DATETIME            NOT NULL,
