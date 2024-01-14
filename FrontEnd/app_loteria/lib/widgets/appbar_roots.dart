@@ -1,5 +1,8 @@
+import 'package:app_loteria/screens/login_screen.dart';
 import 'package:app_loteria/utils/ColorPalette.dart';
 import 'package:flutter/material.dart';
+
+import '../main.dart';
 
 class AppBarWithBackButton extends StatelessWidget
     implements PreferredSizeWidget {
@@ -59,6 +62,7 @@ class AppBarWithBackButton extends StatelessWidget
                   Text('Cerrar Sesión'),
                 ],
               ),
+           
             ),
           ],
           child: Row(

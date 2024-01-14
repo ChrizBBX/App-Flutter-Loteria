@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 import 'package:app_loteria/screens/home_screen.dart';
 import 'package:flutter/cupertino.dart';
@@ -19,45 +21,41 @@ class loginScreen extends StatefulWidget {
 Future<void> fetchData(
     BuildContext context, String username, String password) async {
   try {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => HomeScreen(),
-      ),
+    final peticion = {'nombreUsuario': username, 'contrasena': password};
+    final peticionJson = jsonEncode(peticion);
+    final response = await http.post(
+      Uri.parse('${apiUrl}Usuario/Login'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: peticionJson,
     );
 
-    // final tarea = {'usua_Nombre': username, 'usua_Contrasenia': password};
-    // final jsonTarea = jsonEncode(tarea);
-    // final response = await http.post(
-    //   Uri.parse('${apiUrl}Usuarios/Login'),
-    //   headers: {
-    //     'XApiKey': apiKey,
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: jsonTarea,
-    // );
-    // if (response.statusCode == 200) {
-    //   print(response);
-    //   final decodedJson = jsonDecode(response.body);
-    //   final data = decodedJson["data"];
-    //   print(data);
-    //   SharedPreferences prefs = await SharedPreferences.getInstance();
-    //   prefs.setInt('usua_Id', data['usua_Id']);
-    //   prefs.setString('username', data['usua_Nombre']);
-    //   prefs.setString('email', data['empl_CorreoElectronico']);
-    //   prefs.setString('userfullname', data['emplNombreCompleto']);
-    //   prefs.setString('rol', data['role_Descripcion']);
-    //   prefs.setBool('esAduana', data['empl_EsAduana']);
-    //   prefs.setString('image', data['usua_Image']);
+    if (response.statusCode == 200) {
+      final decodedJson = jsonDecode(response.body);
+      final data = decodedJson["data"];
 
-    // } else {
-    //   CherryToast.error(
-    //     title: Text('El usuario o contraseña son incorrectos',
-    //         style: TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
-    //         textAlign: TextAlign.justify),
-    //     borderRadius: 5,
-    //   ).show(context);
-    // }
+      if (data != null) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        prefs.setInt('usuarioId', int.tryParse(data['usuarioId'] ?? '0') ?? 0);
+        prefs.setString('nombreUsuario', data['nombreUsuario'].toString());
+        prefs.setInt('admin', int.tryParse(data['admin'] ?? '0') ?? 0);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(),
+          ),
+        );
+      }
+    } else {
+      CherryToast.error(
+        title: Text('Usuario o Contraseña Incorrecto',
+            style: TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+            textAlign: TextAlign.justify),
+        borderRadius: 5,
+      ).show(context);
+    }
   } catch (e) {
     if (e.toString().contains('Failed host lookup')) {
       CherryToast.warning(
@@ -66,9 +64,12 @@ Future<void> fetchData(
             textAlign: TextAlign.justify),
         borderRadius: 5,
       ).show(context);
+    } else {
+      print('Error: $e');
     }
-  }
+  } finally {}
 }
+
 class _loginScreenState extends State<loginScreen> {
   bool passToggle = true;
   String username = '';
@@ -225,7 +226,7 @@ class _loginScreenState extends State<loginScreen> {
                               onTap: () {
                                 if (username.isNotEmpty &&
                                     password.isNotEmpty) {
-                                   fetchData(context, username, password);
+                                  fetchData(context, username, password);
                                 } else {
                                   CherryToast.warning(
                                     title: const Text(
