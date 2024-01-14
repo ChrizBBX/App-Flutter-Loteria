@@ -176,14 +176,14 @@ CONSTRAINT PK_Sucursales_NumeroId                          PRIMARY KEY (Sucursal
 CONSTRAINT UQ_Sucursales_SucursalDescripcion               UNIQUE      (SucursalDescripcion)
 )
 
-CREATE TABLE Pedidos
+CREATE TABLE Ventas
 (
-    PedidoId                INT IDENTITY(1,1),
-    NumeroPedido            VARCHAR(150) NOT NULL,
+    VentaId                INT IDENTITY(1,1),
+    NumeroVenta          VARCHAR(150) NOT NULL,
     PersonaId               INT NOT NULL,
     UsuarioId               INT NOT NULL,
     MetodoPagoId            INT NOT NULL,
-    FechaPedido             DATETIME NOT NULL,
+    FechaVenta             DATETIME NOT NULL,
     
     UsuarioCreacion         INT                 NOT NULL,
     FechaCreacion           DATETIME            NOT NULL,
@@ -191,22 +191,22 @@ CREATE TABLE Pedidos
     FechaModificacion       DATETIME,
     Estado                  BIT                                DEFAULT 1
 
-    CONSTRAINT PK_Pedidos_PedidoId PRIMARY KEY (PedidoId),
-    CONSTRAINT UQ_Pedidos_NumeroPedido UNIQUE (NumeroPedido),
-    CONSTRAINT FK_Pedidos_PersonaId_Personas_PersonaId FOREIGN KEY (PersonaId) REFERENCES Personas (PersonaId),
-    CONSTRAINT FK_Pedidos_UsuarioId_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES Usuarios (UsuarioId),
-    CONSTRAINT FK_Pedidos_MetodoPagoId_MetodosPago_MetodoPagoId FOREIGN KEY (MetodoPagoId) REFERENCES MetodosPago(MetodoPagoId),
-    CONSTRAINT FK_Pedidos_UsuarioCreacion_Usuarios_UsuarioId FOREIGN KEY (UsuarioCreacion) REFERENCES Usuarios(UsuarioId),
-    CONSTRAINT FK_Pedidos_UsuarioModificacion_Usuarios_UsuarioId FOREIGN KEY (UsuarioModificacion) REFERENCES Usuarios(UsuarioId),
+    CONSTRAINT PK_Ventas_VentaId PRIMARY KEY (VentaId),
+    CONSTRAINT UQ_Ventas_NumeroVenta UNIQUE (NumeroVenta),
+    CONSTRAINT FK_Ventas_PersonaId_Personas_PersonaId FOREIGN KEY (PersonaId) REFERENCES Personas (PersonaId),
+    CONSTRAINT FK_Ventas_UsuarioId_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES Usuarios (UsuarioId),
+    CONSTRAINT FK_Ventas_MetodoPagoId_MetodosPago_MetodoPagoId FOREIGN KEY (MetodoPagoId) REFERENCES MetodosPago(MetodoPagoId),
+    CONSTRAINT FK_Ventas_UsuarioCreacion_Usuarios_UsuarioId FOREIGN KEY (UsuarioCreacion) REFERENCES Usuarios(UsuarioId),
+    CONSTRAINT FK_Ventas_UsuarioModificacion_Usuarios_UsuarioId FOREIGN KEY (UsuarioModificacion) REFERENCES Usuarios(UsuarioId),
 )
 
 
-CREATE TABLE PedidoDetalles(
-    PedidoDetalleId         INT IDENTITY(1,1),
-    PedidoId                INT                     NOT NULL,
+CREATE TABLE VentaDetalles(
+    VentaDetalleID          INT IDENTITY(1,1),
+    VentaId                 INT                     NOT NULL,
     Numero					INT                     NOT NULL,
     Valor                   DECIMAL					NOT NULL,
 
-	CONSTRAINT PK_PedidoDetalles_PedidoDetalleId PRIMARY KEY (PedidoDetalleId),
-	CONSTRAINT FK_PedidoDetalles_PedidoId_Pedidos_PedidoId FOREIGN KEY (PedidoId) REFERENCES Pedidos (PedidoId)
+	CONSTRAINT PK_VentaDetalles_VentaDetalleID PRIMARY KEY (VentaDetalleId),
+	CONSTRAINT FK_VentaDetalles_VentaId_Ventas_VentaId FOREIGN KEY (VentaId) REFERENCES Ventas (VentaId)
 )
