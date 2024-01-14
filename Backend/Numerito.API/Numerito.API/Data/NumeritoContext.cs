@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using LoteriaApp.WebApi.Data.EntityContext;
 using Microsoft.EntityFrameworkCore;
-using Numerito.API.Services.Ventas.Entities;
+using Numerito.API.Data.Entities;
 
 namespace Numerito.API.Data;
 

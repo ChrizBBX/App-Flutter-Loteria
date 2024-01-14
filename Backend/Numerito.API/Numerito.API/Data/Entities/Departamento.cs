@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Numerito.API.Services.Ventas.Entities;
+namespace Numerito.API.Data.Entities;
 
-public partial class Municipio
+public partial class Departamento
 {
-    public int MunicipioId { get; set; }
+    public int DepartamentoId { get; set; }
 
-    public string? MunicipioDescripcion { get; set; }
+    public string DepartamentoDescripcion { get; set; } = null!;
 
     public int UsuarioCreacion { get; set; }
 

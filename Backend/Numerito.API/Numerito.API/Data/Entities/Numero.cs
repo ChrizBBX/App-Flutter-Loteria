@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Numerito.API.Services.Ventas.Entities;
+namespace Numerito.API.Data.Entities;
 
-public partial class Departamento
+public partial class Numero
 {
-    public int DepartamentoId { get; set; }
+    public int NumeroId { get; set; }
 
-    public string DepartamentoDescripcion { get; set; } = null!;
+    public int Numero1 { get; set; }
+
+    public string? NumeroDescripcion { get; set; }
+
+    public int? Limite { get; set; }
 
     public int UsuarioCreacion { get; set; }
 

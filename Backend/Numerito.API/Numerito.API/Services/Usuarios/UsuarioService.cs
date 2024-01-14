@@ -4,9 +4,9 @@ using LoteriaApp.WebApi.Services.Usuarios.UsuarioDto;
 using LoteriaApp.WebApi.Utility;
 using Microsoft.OpenApi.Any;
 using Numerito.API.Data;
-using Numerito.API.Services.Ventas.Entities;
+using Numerito.API.Data.Entities;
 using Numerito.API.Utility;
-using static Numerito.API.Services.Ventas.Entities.Usuario;
+using static Numerito.API.Data.Entities.Usuario;
 
 namespace Numerito.API.Services.Usuarios
 {

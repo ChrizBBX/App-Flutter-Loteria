@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using Numerito.API.Data;
+using Numerito.API.Services.MetodosPagos;
+using Numerito.API.Services.Personas;
 using Numerito.API.Services.Usuarios;
+using Numerito.API.Services.Ventas;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +28,10 @@ var connectionString = builder.Configuration.GetConnectionString("ConexionProyec
 builder.Services.AddDbContext<NumeritoContext>(options => options.UseSqlServer(connectionString));
 builder.Services.AddTransient<UsuarioService>();
 builder.Services.AddTransient<UsuarioRules>();
+builder.Services.AddTransient<VentaService>();
+builder.Services.AddTransient<VentaRules>();
+builder.Services.AddTransient<MetodoPagoRules>();
+builder.Services.AddTransient<PersonaRules>();
 
 var app = builder.Build();
 
