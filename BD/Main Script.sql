@@ -1,6 +1,6 @@
-CREATE DATABASE Loteria
+CREATE DATABASE Numerito
 GO 
-USE Loteria
+USE Numerito
 
 
 CREATE TABLE Usuarios
@@ -86,8 +86,8 @@ GO
 CREATE TABLE Personas
 (
 PersonaId           INT IDENTITY (1,1),
-Nombres             NVARCHAR (150)  NOT NULL,
-Apellidos           NVARCHAR (150)  NOT NULL,
+Nombres             NVARCHAR (150),
+Apellidos           NVARCHAR (150),
 Identidad           VARCHAR  (13),
 Telefono            VARCHAR  (8),
 CorreoElectronico   NVARCHAR (150),

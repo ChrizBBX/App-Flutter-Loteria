@@ -25,7 +25,7 @@ namespace LoteriaApp.WebApi.Services.Usuarios
             if (usuario == null)
                 return Result<List<Usuario>>.Fault("Esto fallo");
 
-            return Result.Success(usuario);
+            return Result<>.Success(usuario);
         }
 
         public Result<string> AgregarUsuarios(UsuarioDtoC entidad)
