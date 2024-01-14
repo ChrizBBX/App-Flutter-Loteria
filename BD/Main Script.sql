@@ -210,3 +210,6 @@ CREATE TABLE VentaDetalles(
 	CONSTRAINT PK_VentaDetalles_VentaDetalleID PRIMARY KEY (VentaDetalleId),
 	CONSTRAINT FK_VentaDetalles_VentaId_Ventas_VentaId FOREIGN KEY (VentaId) REFERENCES Ventas (VentaId)
 )
+
+
+INSERT INTO MetodosPago VALUES 'Efectivo'

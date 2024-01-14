@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Numerito.API.Services.Ventas.Entities;
+using Numerito.API.Data.Entities;
 
 namespace LoteriaApp.WebApi.Data.EntityContext
 {

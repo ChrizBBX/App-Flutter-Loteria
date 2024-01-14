@@ -1,5 +1,5 @@
 ﻿using LoteriaApp.WebApi.Utility;
-using Numerito.API.Services.Ventas.Entities;
+using Numerito.API.Data.Entities;
 using Numerito.API.Utility;
 
 namespace Numerito.API.Services.Personas

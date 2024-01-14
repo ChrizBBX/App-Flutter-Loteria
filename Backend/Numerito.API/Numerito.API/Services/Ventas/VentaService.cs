@@ -2,10 +2,10 @@
 using LoteriaApp.WebApi.Data.EntityContext;
 using LoteriaApp.WebApi.Utility;
 using Numerito.API.Data;
-using Numerito.API.Services.Ventas.Entities;
+using Numerito.API.Data.Entities;
 using Numerito.API.Services.Ventas.VentasDto;
 using Numerito.API.Utility;
-using static Numerito.API.Services.Ventas.Entities.Venta;
+using static Numerito.API.Data.Entities.Venta;
 
 namespace Numerito.API.Services.Ventas
 {
@@ -25,6 +25,7 @@ namespace Numerito.API.Services.Ventas
                 _context.Database.BeginTransaction();
                 Venta venta = new Venta
                 {
+                    VentaId = 0,
                     NumeroVenta = entidad.NumeroVenta,
                     PersonaId = entidad.PersonaId,
                     UsuarioId = entidad.UsuarioId,
@@ -49,15 +50,25 @@ namespace Numerito.API.Services.Ventas
                     return Result<string>.Fault(menssageValidation, OutputMessage.FaultEntityUsuario);
                 }
 
+                var listaPersonas = _context.Personas.AsQueryable().ToList();
+                var listaUsuarios = _context.Usuarios.AsQueryable().ToList();
+                var listaMetodosPago = _context.MetodosPagos.AsQueryable().ToList();
+
+
+
+                var validaciones = _ventaRules.ValidacionesAgregarVenta(venta, listaPersonas,listaUsuarios,listaMetodosPago);
+                if (!validaciones.Ok)
+                    return Result<string>.Fault(validaciones.Message);
+
                 _context.Ventas.Add(venta);
                 _context.SaveChanges();
                 _context.Database.CommitTransaction();
-                return Result<string>.Success("");
+                return Result<string>.Success(OutputMessage.SuccessInsertVenta);
             }
             catch (Exception ex)
             {
                 _context.Database.RollbackTransaction();
-                return 
+                return Result<string>.Fault(OutputMessage.Error);
             }
         }
     }

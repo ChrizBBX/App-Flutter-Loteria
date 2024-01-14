@@ -1,6 +1,6 @@
 ﻿using LoteriaApp.WebApi.Utility;
+using Numerito.API.Data.Entities;
 using Numerito.API.Services.Personas;
-using Numerito.API.Services.Ventas.Entities;
 using Numerito.API.Utility;
 
 namespace Numerito.API.Services.Usuarios
