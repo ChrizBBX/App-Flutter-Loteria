@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34322.80
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Numerito.API", "Numerito.API\Numerito.API.csproj", "{62A66BE5-C539-4B28-8CDA-52F6B17E22CE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{62A66BE5-C539-4B28-8CDA-52F6B17E22CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62A66BE5-C539-4B28-8CDA-52F6B17E22CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62A66BE5-C539-4B28-8CDA-52F6B17E22CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62A66BE5-C539-4B28-8CDA-52F6B17E22CE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {13069DE3-92D9-4084-A824-516DBC57B147}
+	EndGlobalSection
+EndGlobal
