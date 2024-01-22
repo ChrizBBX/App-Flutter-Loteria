@@ -9,6 +9,7 @@ UsuarioId           INT IDENTITY (1,1),
 NombreUsuario       VARCHAR(150) NOT NULL,
 Contrasena          NVARCHAR(MAX),
 PersonaId           INT NOT NULL,
+SucursalId			INT,
 
 UsuarioCreacion     INT             NOT NULL,
 FechaCreacion       DATETIME        NOT NULL,
@@ -18,10 +19,11 @@ Estado              BIT             DEFAULT 1,
 Admin				BIT
 
 CONSTRAINT PK_Usuarios_usuarioId PRIMARY KEY (UsuarioId),
+CONSTRAINT UQ_Usuarios_NombreUsuario UNIQUE (NombreUsuario)
 )
 
 GO
-INSERT INTO Usuarios VALUES ('admin','123',1,1,GETDATE(),NULL,NULL,1,1)
+INSERT INTO Usuarios VALUES ('admin','123',1,NULL,1,GETDATE(),NULL,NULL,1,1)
 GO
 
 CREATE TABLE MetodosPago
@@ -104,7 +106,7 @@ CONSTRAINT UQ_Personas_Identidad                UNIQUE (Identidad)
 )
 
 GO
-INSERT INTO Personas VALUES ('Legendario','Ramirez','1503198012454','33156532','messileganaaronaldo@gmail.com','Donde tu telefono no esta seguro',1,GETDATE(),NULL,NULL,1)
+INSERT INTO Personas VALUES ('Consumidor Final',NULL,NULL,NULL,NULL,NULL,1,GETDATE(),NULL,NULL,1)
 GO
 
 ALTER TABLE Usuarios
@@ -113,7 +115,8 @@ ADD CONSTRAINT FK_Usuarios_PersonaId_Personas_PersonaId FOREIGN KEY (PersonaId) 
 CREATE TABLE Departamentos
 (
 DepartamentoId          INT IDENTITY (1,1),
-DepartamentoDescripcion VARCHAR (100)   NOT NULL,
+Codigo					VARCHAR(2)		NOT NULL,
+Nombre					VARCHAR (100)   NOT NULL,
 
 UsuarioCreacion         INT             NOT NULL,
 FechaCreacion           DATETIME        NOT NULL,
@@ -122,14 +125,16 @@ FechaModificacion       DATETIME,
 Estado                  BIT                             DEFAULT 1
 
 CONSTRAINT PK_Departamentos_DepartamentoId              PRIMARY KEY (DepartamentoId),
-CONSTRAINT UQ_Departamentos_DepartamentoDescripcion     UNIQUE      (DepartamentoDescripcion)
-
+CONSTRAINT UQ_Departamentos_Codigo						UNIQUE      (Codigo),
+CONSTRAINT UQ_Departamentos_Nombre     UNIQUE      (Nombre)
 )
 
 CREATE TABLE Municipios
 (
 MunicipioId             INT IDENTITY (1,1),
-MunicipioDescripcion    VARCHAR,
+Codigo					VARCHAR(4) NOT NULL,
+Nombre					VARCHAR(150) NOT NULL,
+DepartamentoId			INT NOT NULL,
 
 UsuarioCreacion         INT             NOT NULL,
 FechaCreacion           DATETIME        NOT NULL,
@@ -138,14 +143,15 @@ FechaModificacion       DATETIME,
 Estado                  BIT                             DEFAULT 1
 
 CONSTRAINT PK_Municipios_MunicipioId                    PRIMARY KEY (MunicipioId),
-CONSTRAINT UQ_Municipios_MunicipioDescripcion           UNIQUE      (MunicipioDescripcion)
+CONSTRAINT UQ_Municipios_Nombre							UNIQUE      (Nombre),
+CONSTRAINT UQ_Municipios_Codigo							UNIQUE		(Codigo),
+CONSTRAINT FK_Municipios_DepartamentoId_Departamentos_DepartamentoId FOREIGN KEY (DepartamentoId) REFERENCES Departamentos (DepartamentoId)
 )
 
 
 CREATE TABLE Numeros
 (  
-NumeroId                INT IDENTITY (1,1),
-Numero                  INT                 NOT NULL,
+NumeroId                INT NOT NULL,
 NumeroDescripcion       VARCHAR (150),
 Limite					INT,
 
@@ -156,14 +162,14 @@ FechaModificacion       DATETIME,
 Estado                  BIT                             DEFAULT  1
 
 CONSTRAINT PK_Numeros_NumeroId                          PRIMARY KEY (NumeroId),
-CONSTRAINT UQ_Numeros_Numero                            UNIQUE      (Numero)
-
 )
 
 CREATE TABLE Sucursales
 (
-SucursalId             INT IDENTITY (1,1),
-SucursalDescripcion    VARCHAR (150),
+SucursalId				INT IDENTITY (1,1),
+MunicipioId				INT,
+Nombre					VARCHAR (150),
+Direccion				VARCHAR(250),
 
 
 UsuarioCreacion         INT                 NOT NULL,
@@ -173,13 +179,16 @@ FechaModificacion       DATETIME,
 Estado                  BIT                                DEFAULT 1
 
 CONSTRAINT PK_Sucursales_NumeroId                          PRIMARY KEY (SucursalId),
-CONSTRAINT UQ_Sucursales_SucursalDescripcion               UNIQUE      (SucursalDescripcion)
+CONSTRAINT UQ_Sucursales_SucursalDescripcion               UNIQUE      (Nombre),
+CONSTRAINT FK_Sucursales_MunicipioId_Municipios_MunicipioId FOREIGN KEY (MunicipioId) REFERENCES Municipios (MunicipioId)
 )
+
+ALTER TABLE Usuarios
+ADD CONSTRAINT FK_Usuarios_SucursalId_Sucursales_SucursalId FOREIGN KEY (SucursalId) REFERENCES Sucursales (SucursalId)
 
 CREATE TABLE Ventas
 (
-    VentaId                INT IDENTITY(1,1),
-    NumeroVenta          VARCHAR(150) NOT NULL,
+    VentaId					INT IDENTITY(1,1),
     PersonaId               INT NOT NULL,
     UsuarioId               INT NOT NULL,
     MetodoPagoId            INT NOT NULL,
@@ -192,7 +201,6 @@ CREATE TABLE Ventas
     Estado                  BIT                                DEFAULT 1
 
     CONSTRAINT PK_Ventas_VentaId PRIMARY KEY (VentaId),
-    CONSTRAINT UQ_Ventas_NumeroVenta UNIQUE (NumeroVenta),
     CONSTRAINT FK_Ventas_PersonaId_Personas_PersonaId FOREIGN KEY (PersonaId) REFERENCES Personas (PersonaId),
     CONSTRAINT FK_Ventas_UsuarioId_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES Usuarios (UsuarioId),
     CONSTRAINT FK_Ventas_MetodoPagoId_MetodosPago_MetodoPagoId FOREIGN KEY (MetodoPagoId) REFERENCES MetodosPago(MetodoPagoId),
@@ -204,12 +212,37 @@ CREATE TABLE Ventas
 CREATE TABLE VentaDetalles(
     VentaDetalleID          INT IDENTITY(1,1),
     VentaId                 INT                     NOT NULL,
-    Numero					INT                     NOT NULL,
+    NumeroId				INT                     NOT NULL,
     Valor                   DECIMAL					NOT NULL,
 
 	CONSTRAINT PK_VentaDetalles_VentaDetalleID PRIMARY KEY (VentaDetalleId),
+	CONSTRAINT FK_VentaDetalles_NumeroId_Numeros_NumeroId FOREIGN KEY (NumeroId) REFERENCES Numeros(NumeroId),
 	CONSTRAINT FK_VentaDetalles_VentaId_Ventas_VentaId FOREIGN KEY (VentaId) REFERENCES Ventas (VentaId)
 )
 
+/*Insert de MetodosPago por defecto*/
+INSERT INTO MetodosPago 
+(Descripcion, 
+UsuarioCreacion, 
+FechaCreacion, 
+UsuarioModificacion, 
+FechaModificacion,
+Estado)
+VALUES ('Efectivo',1,GETDATE(),NULL,NULL,1)
 
-INSERT INTO MetodosPago VALUES 'Efectivo'
+/*Insert de Numero por defecto*/
+INSERT INTO Numeros 
+(NumeroId, 
+NumeroDescripcion, 
+Limite, 
+UsuarioCreacion, 
+FechaCreacion,
+UsuarioModificacion, 
+FechaModificacion, 
+Estado)
+VALUES (0,'Avion',1000,1,GETDATE(),NULL,NULL,1)
+
+SELECT * FROM Ventas
+SELECT * FROM VentaDetalles
+SELECT * FROM Numeros
+SELECT * FROM Usuarios

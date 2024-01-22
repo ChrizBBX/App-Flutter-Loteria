@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Numerito.API.Services.Usuarios;
+using Numerito.API.Services.Usuarios.UsuariosDto;
 
 namespace Numerito.API.Controllers
 {
@@ -27,6 +28,13 @@ namespace Numerito.API.Controllers
         public IActionResult AgregarUsuarios(UsuarioDtoC entidad) 
         {
             var result = _usuarioService.AgregarUsuarios(entidad);
+            return Ok(result);
+        }
+
+        [HttpPut("EditarUsuarios")]
+        public IActionResult EditarUsuarios(UsuarioDto entidad)
+        {
+            var result = _usuarioService.EditarUsuarios(entidad);
             return Ok(result);
         }
     }

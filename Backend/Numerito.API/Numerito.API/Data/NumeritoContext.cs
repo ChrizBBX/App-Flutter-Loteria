@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using LoteriaApp.WebApi.Data.EntityContext;
 using Microsoft.EntityFrameworkCore;
 using Numerito.API.Data.Entities;
+using Numerito.API.Data.EntityContext;
 
 namespace Numerito.API.Data;
 

@@ -11,14 +11,21 @@ namespace LoteriaApp.WebApi.Data.EntityContext
             builder.ToTable("Sucursales");
             builder.HasKey(e => e.SucursalId).HasName("PK_Sucursales_NumeroId");
 
-            builder.HasIndex(e => e.SucursalDescripcion, "UQ_Sucursales_SucursalDescripcion").IsUnique();
+            builder.HasIndex(e => e.Nombre, "UQ_Sucursales_SucursalDescripcion").IsUnique();
 
+            builder.Property(e => e.Direccion)
+                .HasMaxLength(250)
+                .IsUnicode(false);
             builder.Property(e => e.Estado).HasDefaultValue(true);
             builder.Property(e => e.FechaCreacion).HasColumnType("datetime");
             builder.Property(e => e.FechaModificacion).HasColumnType("datetime");
-            builder.Property(e => e.SucursalDescripcion)
+            builder.Property(e => e.Nombre)
                 .HasMaxLength(150)
                 .IsUnicode(false);
+
+            builder.HasOne(d => d.Municipio).WithMany(p => p.Sucursales)
+                .HasForeignKey(d => d.MunicipioId)
+                .HasConstraintName("FK_Sucursales_MunicipioId_Municipios_MunicipioId");
         }
     }
 }

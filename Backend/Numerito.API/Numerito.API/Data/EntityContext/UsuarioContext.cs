@@ -11,6 +11,8 @@ namespace LoteriaApp.WebApi.Data.EntityContext
             builder.ToTable("Usuarios");
             builder.HasKey(e => e.UsuarioId).HasName("PK_Usuarios_usuarioId");
 
+            builder.HasIndex(e => e.NombreUsuario, "UQ_Usuarios_NombreUsuario").IsUnique();
+
             builder.Property(e => e.Estado).HasDefaultValue(true);
             builder.Property(e => e.FechaCreacion).HasColumnType("datetime");
             builder.Property(e => e.FechaModificacion).HasColumnType("datetime");
@@ -22,6 +24,10 @@ namespace LoteriaApp.WebApi.Data.EntityContext
                 .HasForeignKey(d => d.PersonaId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Usuarios_PersonaId_Personas_PersonaId");
+
+            builder.HasOne(d => d.Sucursal).WithMany(p => p.Usuarios)
+                .HasForeignKey(d => d.SucursalId)
+                .HasConstraintName("FK_Usuarios_SucursalId_Sucursales_SucursalId");
         }
     }
 }

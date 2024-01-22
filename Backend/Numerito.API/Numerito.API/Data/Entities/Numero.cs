@@ -7,8 +7,6 @@ public partial class Numero
 {
     public int NumeroId { get; set; }
 
-    public int Numero1 { get; set; }
-
     public string? NumeroDescripcion { get; set; }
 
     public int? Limite { get; set; }
@@ -22,4 +20,6 @@ public partial class Numero
     public DateTime? FechaModificacion { get; set; }
 
     public bool? Estado { get; set; }
+
+    public virtual ICollection<VentaDetalle> VentaDetalles { get; set; } = new List<VentaDetalle>();
 }
