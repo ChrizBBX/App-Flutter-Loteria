@@ -1,9 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class CardListWidget extends StatelessWidget {
+class CardListWidget extends StatefulWidget {
   @override
+  _CardListWidgetState createState() => _CardListWidgetState();
+}
+
+class _CardListWidgetState extends State<CardListWidget> {
+  late String nombreUsuario;
+  
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+
+  Future<void> _loadData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      nombreUsuario = prefs.getString('nombreUsuario') ?? '';
+    });
+  }
+
   Widget build(BuildContext context) {
     return Wrap(
       alignment: WrapAlignment.center,
@@ -28,7 +50,7 @@ class CardListWidget extends StatelessWidget {
                 left: 0,
                 right: 0,
                 child: Text(
-                  'Bienvenido Usuario',
+                  'Bienvenido $nombreUsuario',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,

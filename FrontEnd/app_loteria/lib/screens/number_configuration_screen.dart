@@ -28,7 +28,7 @@ class _NumberConfigurationScreenState extends State<NumberConfigurationScreen> {
         ),
         SizedBox(height: 16.0),
         TextField(
-        controller: _numberController,
+          controller: _numberController,
           keyboardType: TextInputType.number,
           maxLength: 2,
           decoration: InputDecoration(
@@ -37,7 +37,7 @@ class _NumberConfigurationScreenState extends State<NumberConfigurationScreen> {
             errorText: _validateInput(),
           ),
         ),
-        SizedBox(height: 50.0),
+        SizedBox(height: 20.0),
         NumPad(
           onKeyPressed: _updateTextField,
         ),

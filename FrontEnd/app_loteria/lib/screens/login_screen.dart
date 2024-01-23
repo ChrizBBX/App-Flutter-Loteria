@@ -34,12 +34,14 @@ Future<void> fetchData(
     if (response.statusCode == 200) {
       final decodedJson = jsonDecode(response.body);
       final data = decodedJson["data"];
-
+      print(data);
       if (data != null) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        prefs.setInt('usuarioId', int.tryParse(data['usuarioId'] ?? '0') ?? 0);
-        prefs.setString('nombreUsuario', data['nombreUsuario'].toString());
-        prefs.setInt('admin', int.tryParse(data['admin'] ?? '0') ?? 0);
+        prefs.setInt('usuarioId', data[0]['usuarioId']);
+        prefs.setString('nombreUsuario', data[0]['nombreUsuario'].toString());
+        bool adminValue = data[0]['admin'];
+        int adminIntValue = adminValue ? 1 : 0;
+        prefs.setInt('admin', adminIntValue);
 
         Navigator.pushReplacement(
           context,
