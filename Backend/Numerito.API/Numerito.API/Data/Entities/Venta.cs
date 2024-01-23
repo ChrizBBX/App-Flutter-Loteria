@@ -8,8 +8,6 @@ public partial class Venta
 {
     public int VentaId { get; set; }
 
-    public string NumeroVenta { get; set; } = null!;
-
     public int PersonaId { get; set; }
 
     public int UsuarioId { get; set; }
@@ -44,7 +42,6 @@ public partial class Venta
     {
         public VentaValidations()
         {
-            RuleFor(x => x.NumeroVenta).NotEmpty();
             RuleFor(x => x.PersonaId).NotEmpty();
             RuleFor(x => x.UsuarioId).NotEmpty();
             RuleFor(x => x.MetodoPagoId).NotEmpty();

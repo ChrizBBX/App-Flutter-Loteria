@@ -11,15 +11,10 @@ namespace LoteriaApp.WebApi.Data.EntityContext
             builder.ToTable("Ventas");
             builder.HasKey(e => e.VentaId).HasName("PK_Ventas_VentaId");
 
-            builder.HasIndex(e => e.NumeroVenta, "UQ_Ventas_NumeroVenta").IsUnique();
-
             builder.Property(e => e.Estado).HasDefaultValue(true);
             builder.Property(e => e.FechaCreacion).HasColumnType("datetime");
             builder.Property(e => e.FechaModificacion).HasColumnType("datetime");
             builder.Property(e => e.FechaVenta).HasColumnType("datetime");
-            builder.Property(e => e.NumeroVenta)
-                .HasMaxLength(150)
-                .IsUnicode(false);
 
             builder.HasOne(d => d.MetodoPago).WithMany(p => p.Venta)
                 .HasForeignKey(d => d.MetodoPagoId)

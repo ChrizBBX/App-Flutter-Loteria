@@ -7,6 +7,7 @@
         public string? Contrasena { get; set; }
 
         public int PersonaId { get; set; }
+        public int? SucursalId { get; set; }
 
         public int UsuarioCreacion { get; set; }
         public bool? Admin { get; set; }

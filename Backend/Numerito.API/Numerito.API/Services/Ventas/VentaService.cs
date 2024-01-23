@@ -26,7 +26,6 @@ namespace Numerito.API.Services.Ventas
                 Venta venta = new Venta
                 {
                     VentaId = 0,
-                    NumeroVenta = entidad.NumeroVenta,
                     PersonaId = entidad.PersonaId,
                     UsuarioId = entidad.UsuarioId,
                     MetodoPagoId = entidad.MetodoPagoId,
@@ -53,14 +52,49 @@ namespace Numerito.API.Services.Ventas
                 var listaPersonas = _context.Personas.AsQueryable().ToList();
                 var listaUsuarios = _context.Usuarios.AsQueryable().ToList();
                 var listaMetodosPago = _context.MetodosPagos.AsQueryable().ToList();
-
-
+                var listaNumeros = _context.Numeros.AsQueryable().ToList();
 
                 var validaciones = _ventaRules.ValidacionesAgregarVenta(venta, listaPersonas,listaUsuarios,listaMetodosPago);
                 if (!validaciones.Ok)
                     return Result<string>.Fault(validaciones.Message);
 
                 _context.Ventas.Add(venta);
+                _context.SaveChanges();
+
+                foreach ( var item in entidad.VentaDetalles)
+                {
+                    var validacionesDetalle = _ventaRules.ValidarNumero(listaNumeros, item.NumeroId, item.Valor);
+                    if (!validacionesDetalle.Ok)
+                        return Result<string>.Fault(validacionesDetalle.Message);
+
+                    VentaDetalle ventaDetalle = new VentaDetalle
+                    {
+                        VentaId = venta.VentaId,
+                        NumeroId = item.NumeroId,
+                        Valor = item.Valor,
+                    };
+
+                    #region ActualizarStock
+                    var Numero = listaNumeros.Where(x => x.NumeroId == item.NumeroId).FirstOrDefault();
+
+                    int cantidadRestar = item.Valor / 5;
+
+                    if (cantidadRestar > Numero.Limite)
+                    {
+                        Numero.Limite = 0;
+                        _context.Numeros.Update(Numero);
+                    }
+                    else
+                    {
+                        Numero.Limite = Numero.Limite - cantidadRestar;
+                        _context.Numeros.Update(Numero);
+                    }
+                    #endregion
+
+
+                    _context.VentaDetalles.Add(ventaDetalle);
+                }
+
                 _context.SaveChanges();
                 _context.Database.CommitTransaction();
                 return Result<string>.Success(OutputMessage.SuccessInsertVenta);

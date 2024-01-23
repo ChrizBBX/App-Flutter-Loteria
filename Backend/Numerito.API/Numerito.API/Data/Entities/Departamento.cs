@@ -7,7 +7,9 @@ public partial class Departamento
 {
     public int DepartamentoId { get; set; }
 
-    public string DepartamentoDescripcion { get; set; } = null!;
+    public string Codigo { get; set; } = null!;
+
+    public string Nombre { get; set; } = null!;
 
     public int UsuarioCreacion { get; set; }
 
@@ -18,4 +20,6 @@ public partial class Departamento
     public DateTime? FechaModificacion { get; set; }
 
     public bool? Estado { get; set; }
+
+    public virtual ICollection<Municipio> Municipios { get; set; } = new List<Municipio>();
 }

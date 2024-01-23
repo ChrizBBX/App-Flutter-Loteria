@@ -14,6 +14,8 @@ public partial class Usuario
 
     public int PersonaId { get; set; }
 
+    public int? SucursalId { get; set; }
+
     public int UsuarioCreacion { get; set; }
 
     public DateTime FechaCreacion { get; set; }
@@ -37,6 +39,8 @@ public partial class Usuario
     public virtual ICollection<Pago> Pagos { get; set; } = new List<Pago>();
 
     public virtual Persona Persona { get; set; } = null!;
+
+    public virtual Sucursal? Sucursal { get; set; }
 
     public virtual ICollection<Venta> VentaUsuarioCreacionNavigations { get; set; } = new List<Venta>();
 
