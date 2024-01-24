@@ -6,6 +6,7 @@
         public const string Error = "Ha ocurrido un error";
         #endregion
         #region Usuarios
+        public const string SuccessDisableUsuario = "El usuario se ha desactivado exitosamente";
         public const string SuccessInsertUsuario = "El usuario se ha agregado exitosamente";
         public const string SuccessUpdateUsuario = "El usuario se ha editado exitosamente";
         public const string FaultEntityUsuario = "Hay campos vacios o la entidad es invalida";

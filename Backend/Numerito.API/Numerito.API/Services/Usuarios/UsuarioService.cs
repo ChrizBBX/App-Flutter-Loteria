@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
+using LoteriaApp.WebApi.Data.EntityContext;
 using LoteriaApp.WebApi.Services.Usuarios.UsuarioDto;
 using LoteriaApp.WebApi.Utility;
 using Microsoft.EntityFrameworkCore;
@@ -18,6 +19,7 @@ namespace Numerito.API.Services.Usuarios
         private readonly NumeritoContext _context;
         private readonly UsuarioRules _rules;
         private readonly IMapper _mapper;
+
         public UsuarioService(NumeritoContext loteriaContext, UsuarioRules rules, IMapper mapper)
         {
             _context = loteriaContext;
@@ -98,20 +100,7 @@ namespace Numerito.API.Services.Usuarios
             Encrypt encrypt = new Encrypt();
             var password = encrypt.HashPassword(entidad.Contrasena);
 
-            Usuario usuario = new Usuario
-            {
-                UsuarioId = entidad.UsuarioId,
-                NombreUsuario = entidad.NombreUsuario,
-                Contrasena = entidad.Contrasena,
-                PersonaId = entidad.PersonaId,
-                SucursalId = entidad.SucursalId,
-                UsuarioCreacion = entidad.UsuarioCreacion,
-                FechaCreacion = entidad.FechaCreacion,
-                UsuarioModificacion = entidad.UsuarioModificacion,
-                FechaModificacion = entidad.FechaModificacion,
-                Estado = entidad.Estado,
-                Admin = entidad.Admin
-            };
+            var usuario = _mapper.Map<Usuario>(entidad);
 
             UsuarioValidations validator = new UsuarioValidations();
             validator.RuleFor(x => x.UsuarioModificacion).NotEmpty().WithMessage("Campo UsuarioModificacion Invalido");
@@ -132,10 +121,39 @@ namespace Numerito.API.Services.Usuarios
             if (!validaciones.Ok)
                 return Result<string>.Fault(validaciones.Message);
 
+            var original = listaUsuarios.FirstOrDefault(x => x.UsuarioId == usuario.UsuarioId);
+            if (original == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);
+
+            original.NombreUsuario = usuario.NombreUsuario;
+            original.Contrasena = password;
+            original.PersonaId = usuario.PersonaId;
+            original.SucursalId = usuario.SucursalId == 0 ? null : usuario.SucursalId;
+            original.UsuarioModificacion = usuario.UsuarioModificacion;
+            original.FechaModificacion = usuario.FechaModificacion;
+
+
+                _context.Usuarios.Update(original);
+                _context.SaveChanges();
+            
+            return Result<string>.Success(OutputMessage.SuccessUpdateUsuario);
+        }
+
+        public Result<string> DesactivarUsuarios(int usuarioId)
+        {
+            var listaUsuarios = _context.Usuarios.AsQueryable().ToList();
+            var validaciones = _rules.DesactivarUsuarioValidaciones(listaUsuarios, usuarioId);
+
+            if (!validaciones.Ok)
+                return Result<string>.Fault(validaciones.Message);
+
+            var usuario = listaUsuarios.FirstOrDefault(x => x.UsuarioId == usuarioId);
+            if (usuario == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);
+
+            usuario.Estado = false;
             _context.Usuarios.Update(usuario);
             _context.SaveChanges();
 
-            return Result<string>.Success(OutputMessage.SuccessUpdateUsuario);
+            return Result<string>.Success(OutputMessage.SuccessDisableUsuario);
         }
     }
 }

@@ -41,6 +41,7 @@ public partial class NumeritoContext : DbContext
     public virtual DbSet<VentaDetalle> VentaDetalles { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new UsuarioContext());
         modelBuilder.ApplyConfiguration(new DepartamentoContext());
         modelBuilder.ApplyConfiguration(new MembresiaContext());
         modelBuilder.ApplyConfiguration(new MetodosPagoContext());
@@ -51,8 +52,6 @@ public partial class NumeritoContext : DbContext
         modelBuilder.ApplyConfiguration(new VentaDetalleContext());
         modelBuilder.ApplyConfiguration(new PersonaContext());
         modelBuilder.ApplyConfiguration(new SucursalContext());
-        modelBuilder.ApplyConfiguration(new UsuarioContext());
-
         OnModelCreatingPartial(modelBuilder);
     }
 
