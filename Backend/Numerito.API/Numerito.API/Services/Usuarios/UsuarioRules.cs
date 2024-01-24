@@ -25,7 +25,7 @@ namespace Numerito.API.Services.Usuarios
             var result = listaUsuarios.FirstOrDefault(x => x.UsuarioId == usuarioId);
 
             if (result == null)
-                return Result<bool>.Fault(OutputMessage.FaultUsuarioNotExists);
+                return Result<bool>.Fault($"{OutputMessage.FaultUsuarioNotExists}, UsuarioEditar: {usuarioId}");
 
             return Result<bool>.Success(true);
         }
@@ -57,13 +57,14 @@ namespace Numerito.API.Services.Usuarios
             if (!validarUsuarioIdModificador.Ok)
                 return Result<bool>.Fault(validarUsuarioIdModificador.Message);
 
-            Result<bool> validarUsuarioIdCreador = VerificarUsuarioIdEditar(listaUsuarios, usuario.UsuarioCreacion);
-            if (!validarUsuarioIdCreador.Ok)
-                return Result<bool>.Fault(validarUsuarioIdCreador.Message);
+            return Result<bool>.Success(true);
+        }
 
-            Result<bool> validarSucursalId = sucursalRules.VerificarSucursalUsuario(listaSucursales, usuario.SucursalId);
-            if (!validarSucursalId.Ok)
-                return Result<bool>.Fault(validarSucursalId.Message);
+        public Result<bool> DesactivarUsuarioValidaciones(List<Usuario> listaUsuarios, int usuarioId)
+        {
+            Result<bool> validarUsuarioId = VerificarUsuarioId(listaUsuarios, usuarioId);
+            if (!validarUsuarioId.Ok)
+                return Result<bool>.Fault(validarUsuarioId.Message);
 
             return Result<bool>.Success(true);
         }

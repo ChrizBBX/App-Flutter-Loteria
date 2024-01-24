@@ -6,6 +6,7 @@
         public const string Error = "Ha ocurrido un error";
         #endregion
         #region Usuarios
+        public const string SuccessDisableUsuario = "El usuario se ha desactivado exitosamente";
         public const string SuccessInsertUsuario = "El usuario se ha agregado exitosamente";
         public const string SuccessUpdateUsuario = "El usuario se ha editado exitosamente";
         public const string FaultEntityUsuario = "Hay campos vacios o la entidad es invalida";
@@ -27,6 +28,10 @@
         #endregion
         #region Sucursales
         public const string FaultSucursalNotExists = "La sucursal seleccionada no existe";
+        #endregion
+        #region Cierres
+        public const string SuccessInsertCierre = "El cierre se ha realizado exitosamente";
+        public const string FaultLimitCierre = "Ya se han realizado todos los cierres de hoy";
         #endregion
     }
 }

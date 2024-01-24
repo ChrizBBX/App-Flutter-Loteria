@@ -37,5 +37,12 @@ namespace Numerito.API.Controllers
             var result = _usuarioService.EditarUsuarios(entidad);
             return Ok(result);
         }
+
+        [HttpPut("DesactivarUsuarios")]
+        public IActionResult DesactivarUsuarios(int usuarioId)
+        {
+            var result = _usuarioService.DesactivarUsuarios(usuarioId);
+            return Ok(result);
+        }
     }
 }

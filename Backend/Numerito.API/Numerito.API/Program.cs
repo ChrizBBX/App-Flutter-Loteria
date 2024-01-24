@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Numerito.API.Data;
 using Numerito.API.Data.MapProfile;
+using Numerito.API.Services.Cierres;
 using Numerito.API.Services.MetodosPagos;
 using Numerito.API.Services.Personas;
 using Numerito.API.Services.Usuarios;
@@ -33,6 +34,8 @@ builder.Services.AddTransient<VentaService>();
 builder.Services.AddTransient<VentaRules>();
 builder.Services.AddTransient<MetodoPagoRules>();
 builder.Services.AddTransient<PersonaRules>();
+builder.Services.AddTransient<CierreService>();
+builder.Services.AddTransient<CierreRules>();
 builder.Services.AddAutoMapper(typeof(MapProfile));
 
 var app = builder.Build();
