@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Numerito.API.Utitily.Scaffolding;
+using System;
 using System.Collections.Generic;
 
 namespace Numerito.API.Data.Entities;
@@ -20,6 +21,8 @@ public partial class Numero
     public DateTime? FechaModificacion { get; set; }
 
     public bool? Estado { get; set; }
+
+    public virtual ICollection<Cierre> Cierres { get; set; } = new List<Cierre>();
 
     public virtual ICollection<VentaDetalle> VentaDetalles { get; set; } = new List<VentaDetalle>();
 }

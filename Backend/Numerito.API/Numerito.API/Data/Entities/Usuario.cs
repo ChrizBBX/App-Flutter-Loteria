@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using Numerito.API.Utitily.Scaffolding;
 using System;
 using System.Collections.Generic;
 
@@ -27,6 +28,8 @@ public partial class Usuario
     public bool? Estado { get; set; }
 
     public bool? Admin { get; set; }
+
+    public virtual ICollection<Cierre> Cierres { get; set; } = new List<Cierre>();
 
     public virtual ICollection<Membresia> MembresiaUsuarioCreacionNavigations { get; set; } = new List<Membresia>();
 

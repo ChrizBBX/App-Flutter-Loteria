@@ -4,6 +4,7 @@ using LoteriaApp.WebApi.Data.EntityContext;
 using Microsoft.EntityFrameworkCore;
 using Numerito.API.Data.Entities;
 using Numerito.API.Data.EntityContext;
+using Numerito.API.Utitily.Scaffolding;
 
 namespace Numerito.API.Data;
 
@@ -31,7 +32,7 @@ public partial class NumeritoContext : DbContext
     public virtual DbSet<Pago> Pagos { get; set; }
 
     public virtual DbSet<Persona> Personas { get; set; }
-
+    public virtual DbSet<Cierre> Cierres { get; set; }
     public virtual DbSet<Sucursal> Sucursales { get; set; }
 
     public virtual DbSet<Usuario> Usuarios { get; set; }
@@ -52,6 +53,7 @@ public partial class NumeritoContext : DbContext
         modelBuilder.ApplyConfiguration(new VentaDetalleContext());
         modelBuilder.ApplyConfiguration(new PersonaContext());
         modelBuilder.ApplyConfiguration(new SucursalContext());
+        modelBuilder.ApplyConfiguration(new CierreContext());
         OnModelCreatingPartial(modelBuilder);
     }
 

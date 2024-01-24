@@ -220,6 +220,18 @@ CREATE TABLE VentaDetalles(
 	CONSTRAINT FK_VentaDetalles_VentaId_Ventas_VentaId FOREIGN KEY (VentaId) REFERENCES Ventas (VentaId)
 )
 
+CREATE TABLE Cierres
+(
+CierreId INT IDENTITY (1,1),
+NumeroId INT NOT NULL,
+UsuarioId INT NOT NULL,
+FechaCierre DATETIME NOT NULL
+
+CONSTRAINT PK_Cierres_CierreId PRIMARY KEY (CierreId),
+CONSTRAINT FK_Cierres_NumeroId_Numeros_NumeroId FOREIGN KEY (NumeroId) REFERENCES Numeros(NumeroId),
+CONSTRAINT FK_Cierres_UsuarioId_Usuarios_UsuarioId FOREIGN KEY (UsuarioId) REFERENCES Usuarios (usuarioId)
+)
+
 /*Insert de MetodosPago por defecto*/
 INSERT INTO MetodosPago 
 (Descripcion, 

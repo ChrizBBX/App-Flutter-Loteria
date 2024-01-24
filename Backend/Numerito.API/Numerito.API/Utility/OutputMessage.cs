@@ -29,5 +29,9 @@
         #region Sucursales
         public const string FaultSucursalNotExists = "La sucursal seleccionada no existe";
         #endregion
+        #region Cierres
+        public const string SuccessInsertCierre = "El cierre se ha realizado exitosamente";
+        public const string FaultLimitCierre = "Ya se han realizado todos los cierres de hoy";
+        #endregion
     }
 }
