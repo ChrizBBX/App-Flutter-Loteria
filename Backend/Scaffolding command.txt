@@ -1,1 +1,4 @@
 Scaffold-DbContext "Server=DESKTOP-0N2TA4E\SQLEXPRESS;Database=Numerito;User id=chris;Password=123;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Data
+
+Scaffold-DbContext "Server=ISAAC\\SQLEXPRESS;Database=Numerito;User id=IsHatake;Password=123;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Data
+
