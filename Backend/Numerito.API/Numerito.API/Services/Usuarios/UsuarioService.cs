@@ -155,5 +155,23 @@ namespace Numerito.API.Services.Usuarios
 
             return Result<string>.Success(OutputMessage.SuccessDisableUsuario);
         }
+
+        public Result<string> EditarContrasenia(UsuarioDto entidad)
+        {
+            var listaUsuarios = _context.Usuarios.AsQueryable().ToList();
+           // var validaciones = _rules.EditarUsuarioValidaciones(listaUsuarios, entidad.UsuarioId);
+
+           //if (!validaciones.Ok)
+           //    return Result<string>.Fault(validaciones.Message);
+
+            var usuario = listaUsuarios.FirstOrDefault(x => x.UsuarioId == entidad.UsuarioId);
+            if (usuario == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);
+
+            usuario.Estado = false;
+            _context.Usuarios.Update(usuario);
+            _context.SaveChanges();
+
+            return Result<string>.Success(OutputMessage.SuccessDisableUsuario);
+        }
     }
 }

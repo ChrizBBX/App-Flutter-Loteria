@@ -8,6 +8,7 @@ CREATE TABLE Usuarios
 UsuarioId           INT IDENTITY (1,1),
 NombreUsuario       VARCHAR(150) NOT NULL,
 Contrasena          NVARCHAR(MAX),
+ImagenUrl			NVARCHAR (MAX)   DEFAULT 'https://cdn-icons-png.flaticon.com/512/6073/6073873.png',
 PersonaId           INT NOT NULL,
 SucursalId			INT,
 
@@ -23,7 +24,7 @@ CONSTRAINT UQ_Usuarios_NombreUsuario UNIQUE (NombreUsuario)
 )
 
 GO
-INSERT INTO Usuarios VALUES ('admin','123',1,NULL,1,GETDATE(),NULL,NULL,1,1)
+INSERT INTO Usuarios VALUES ('admin','123','https://cdn-icons-png.flaticon.com/512/6073/6073873.png',1,NULL,1,GETDATE(),NULL,NULL,1,1)
 GO
 
 CREATE TABLE MetodosPago

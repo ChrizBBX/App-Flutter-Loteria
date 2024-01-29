@@ -18,11 +18,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddPolicy("AllowFlutter", builder =>
     {
         builder.AllowAnyOrigin()
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        .AllowAnyHeader()
+        .AllowAnyMethod()
+        .WithExposedHeaders("Authorization");
     });
 });
 
@@ -36,6 +37,9 @@ builder.Services.AddTransient<MetodoPagoRules>();
 builder.Services.AddTransient<PersonaRules>();
 builder.Services.AddTransient<CierreService>();
 builder.Services.AddTransient<CierreRules>();
+builder.Services.AddTransient<PersonaService>();
+builder.Services.AddTransient<PersonaRules>();
+
 builder.Services.AddAutoMapper(typeof(MapProfile));
 
 var app = builder.Build();
@@ -46,6 +50,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors("AllowFlutter");
 
 app.UseHttpsRedirection();
 

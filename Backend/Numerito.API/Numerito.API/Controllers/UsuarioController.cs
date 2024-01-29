@@ -38,6 +38,20 @@ namespace Numerito.API.Controllers
             return Ok(result);
         }
 
+        [HttpPut("Editar/Imagen")]
+        public IActionResult EditarImagen(UsuarioDto entidad)
+        {
+            var result = _usuarioService.EditarUsuarios(entidad);
+            return Ok(result);
+        }
+
+        [HttpPut("Editar/Contrasenia")]
+        public IActionResult EditarContrasenia(UsuarioDto entidad)
+        {
+            var result = _usuarioService.EditarContrasenia(entidad);
+            return Ok(result);
+        }
+
         [HttpPut("DesactivarUsuarios")]
         public IActionResult DesactivarUsuarios(int usuarioId)
         {
