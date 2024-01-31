@@ -18,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _getSelectedComponent() {
     switch (_selectedIndex) {
       case 0:
-        return Sale_Screen();
+        return SaleScreen();
       case 1:
         return CardListWidget();
       case 2:

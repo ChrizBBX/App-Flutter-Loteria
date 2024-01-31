@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FluentValidation;
+using System;
 using System.Collections.Generic;
 
 namespace Numerito.API.Data.Entities;
@@ -32,4 +33,13 @@ public partial class Persona
     public virtual ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>();
 
     public virtual ICollection<Venta> Venta { get; set; } = new List<Venta>();
-}
+    public class PersonaValidations : AbstractValidator<Persona>
+    {
+        public PersonaValidations()
+        {
+            RuleFor(x => x.Identidad).NotEmpty().MaximumLength(150).WithMessage("Campo Identidad Invalido");
+            RuleFor(x => x.Nombres).NotEmpty().WithMessage("Campo Nombres Invalido");
+            RuleFor(x => x.Apellidos).NotEmpty().WithMessage("Campo Apellidos Invalido");
+        }
+    }
+}   

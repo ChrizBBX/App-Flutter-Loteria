@@ -15,6 +15,10 @@
         #endregion
         #region Personas
         public const string FaultPersonaNotExists = "La persona seleccionada no existe";
+        public const string FaultPersonaIdentidadExists = "Ya existe una persona con este número de identidad";
+        public const string SuccessUpdatePersona = "La persona se ha editado exitosamente";
+        public const string FaultEntityPersona = "Hay campos vacios o la entidad es invalida";
+
         #endregion
         #region Ventas
         public const string SuccessInsertVenta = "La venta de ha realizado exitosamente";
@@ -25,6 +29,7 @@
         #region Numeros
         public const string FaultNumeroNotExists = "El numero seleccionado no existe";
         public const string FaultNumeroLimit = "Limite del numero excedido";
+        public const string SuccessUpdateNumero = "El limite ha sido editado exitosamente";
         #endregion
         #region Sucursales
         public const string FaultSucursalNotExists = "La sucursal seleccionada no existe";

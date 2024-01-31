@@ -1,8 +1,12 @@
+import 'package:app_loteria/screens/home_screen.dart';
 import 'package:app_loteria/screens/login_screen.dart';
+import 'package:app_loteria/screens/profile_screen.dart';
 import 'package:app_loteria/utils/ColorPalette.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../main.dart';
+import '../models/Usuario.dart';
 
 class AppBarWithBackButton extends StatelessWidget
     implements PreferredSizeWidget {
@@ -31,15 +35,31 @@ class AppBarWithBackButton extends StatelessWidget
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
         onPressed: () {
-          Navigator.of(context).pop();
+          Navigator.pop(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => HomeScreen(),
+                ),
+              );
         },
       ),
       actions: [
         PopupMenuButton<String>(
           onSelected: (value) {
             if (value == 'mi_perfil') {
+              Navigator.pop(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(),
+                ),
+              );
             } else if (value == 'cerrar_sesion') {
-              Navigator.pushReplacementNamed(context, '/login');
+               Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => loginScreen(),
+                ),
+              );
             }
           },
           itemBuilder: (context) => [
@@ -62,7 +82,6 @@ class AppBarWithBackButton extends StatelessWidget
                   Text('Cerrar Sesión'),
                 ],
               ),
-           
             ),
           ],
           child: Row(
@@ -102,8 +121,8 @@ class AppBarWithoutBackButton extends StatelessWidget
     return AppBar(
       title: Image.asset(
         imageUrl,
-        height: 40,
-        width: 120,
+        height: 170,
+        width: 210,
         fit: BoxFit.fitHeight,
       ),
       centerTitle: true,
@@ -111,9 +130,20 @@ class AppBarWithoutBackButton extends StatelessWidget
         PopupMenuButton<String>(
           onSelected: (value) {
             if (value == 'mi_perfil') {
+              
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(),
+                ),
+              );
             } else if (value == 'cerrar_sesion') {
-              Navigator.pushReplacementNamed(
-                  context, '/login'); // Ajusta la ruta según tu implementación
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => loginScreen(),
+                ),
+              );
             }
           },
           itemBuilder: (context) => [

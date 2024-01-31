@@ -1,3 +1,5 @@
+import 'package:app_loteria/screens/persona/createperonsa_screen.dart';
+import 'package:app_loteria/screens/persona/listpersona_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -10,14 +12,12 @@ class CardListWidget extends StatefulWidget {
 
 class _CardListWidgetState extends State<CardListWidget> {
   late String nombreUsuario;
-  
 
   @override
   void initState() {
     super.initState();
     _loadData();
   }
-
 
   Future<void> _loadData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -77,25 +77,48 @@ class _CardListWidgetState extends State<CardListWidget> {
             ],
           ),
         ),
-        CardWidget(
-          title: 'Tarjeta 1',
-          color: Colors.blue.shade400,
-          icon: Icons.event,
+        GestureDetector(
+          onTap: () {
+             Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ListPersonaScreen()),
+            );
+          },
+          child: CardWidget(  
+            title: 'Personas',
+            color: Colors.blue.shade400,
+            icon: Icons.person,
+          ),
         ),
-        CardWidget(
-          title: 'Tarjeta 2',
-          color: Colors.red.shade400,
-          icon: Icons.add,
+        GestureDetector(
+          onTap: () {
+            print("Tocaste la tarjeta 'Tarjeta 2'");
+          },
+          child: CardWidget(
+            title: 'Tarjeta 2',
+            color: Colors.red.shade400,
+            icon: Icons.add,
+          ),
         ),
-        CardWidget(
-          title: 'Tarjeta 3',
-          color: Colors.purple.shade600,
-          icon: Icons.emoji_events_outlined,
+        GestureDetector(
+          onTap: () {
+            print("Tocaste la tarjeta 'Tarjeta 3'");
+          },
+          child: CardWidget(
+            title: 'Tarjeta 3',
+            color: Colors.purple.shade600,
+            icon: Icons.emoji_events_outlined,
+          ),
         ),
-        CardWidget(
-          title: 'Tarjeta 4',
-          color: Colors.lightGreen.shade600,
-          icon: Icons.query_stats_outlined,
+        GestureDetector(
+          onTap: () {
+            print("Tocaste la tarjeta 'Tarjeta 4'");
+          },
+          child: CardWidget(
+            title: 'Tarjeta 4',
+            color: Colors.lightGreen.shade600,
+            icon: Icons.query_stats_outlined,
+          ),
         ),
       ],
     );

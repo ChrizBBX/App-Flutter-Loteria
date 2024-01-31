@@ -34,11 +34,23 @@ Future<void> fetchData(
     if (response.statusCode == 200) {
       final decodedJson = jsonDecode(response.body);
       final data = decodedJson["data"];
-      print(data);
-      if (data != null) {
+      final message = decodedJson["message"];
+      print(message);
+      if (message == 'El usuario o contraseña es incorrecto') {
+        CherryToast.warning(
+          title: const Text('Usuario o Contraseña Incorrecto',
+              style: TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+              textAlign: TextAlign.start),
+          borderRadius: 5,
+        ).show(context);
+      } else {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setInt('usuarioId', data[0]['usuarioId']);
         prefs.setString('nombreUsuario', data[0]['nombreUsuario'].toString());
+        prefs.setString('imagen',
+            /* data[0]['imagen'].toString()*/ 'https://64.media.tumblr.com/6a5a68b858b592f3bc84d2e7f4be90bb/8a8beb1bdd1ae19a-48/s1280x1920/38303321aed4091d34600f8d9147378d46b29d35.jpg');
+        prefs.setInt('sucursalId', data[0]['sucursalId'] ?? 0);
+        prefs.setInt('personaId', data[0]['personaId'] ?? 0);
         bool adminValue = data[0]['admin'];
         int adminIntValue = adminValue ? 1 : 0;
         prefs.setInt('admin', adminIntValue);
@@ -52,16 +64,16 @@ Future<void> fetchData(
       }
     } else {
       CherryToast.error(
-        title: Text('Usuario o Contraseña Incorrecto',
+        title: const Text('No se ha podido conectar al servidor',
             style: TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
-            textAlign: TextAlign.justify),
+            textAlign: TextAlign.start),
         borderRadius: 5,
       ).show(context);
     }
   } catch (e) {
     if (e.toString().contains('Failed host lookup')) {
       CherryToast.warning(
-        title: Text('No se pudo conectar al servidor',
+        title: const Text('No se pudo conectar al servidor',
             style: TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
             textAlign: TextAlign.justify),
         borderRadius: 5,
@@ -98,7 +110,7 @@ class _loginScreenState extends State<loginScreen> {
               child: Column(
                 children: [
                   Padding(
-                    padding: EdgeInsets.all(20),
+                    padding: const EdgeInsets.all(20),
                     child: Card(
                       color: const Color.fromARGB(0, 0, 0, 0),
                       shape: RoundedRectangleBorder(
@@ -116,8 +128,8 @@ class _loginScreenState extends State<loginScreen> {
                               ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(18),
+                          const Padding(
+                            padding: EdgeInsets.all(18),
                             child: Text(
                               'INICIO DE SESIÓN',
                               style: TextStyle(
@@ -128,7 +140,7 @@ class _loginScreenState extends State<loginScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20.0),
+                          const SizedBox(height: 20.0),
                           Padding(
                             padding: const EdgeInsets.only(
                                 right: 18, left: 18, bottom: 18),
@@ -138,19 +150,19 @@ class _loginScreenState extends State<loginScreen> {
                                   username = value;
                                 });
                               },
-                              decoration: InputDecoration(
-                                enabledBorder: const OutlineInputBorder(
+                              decoration: const InputDecoration(
+                                enabledBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
-                                focusedBorder: const OutlineInputBorder(
+                                focusedBorder: OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
                                 label: Text("Usuario",
                                     style: TextStyle(color: Colors.white)),
-                                prefixIcon: const Icon(Icons.person,
-                                    color: Colors.white),
+                                prefixIcon:
+                                    Icon(Icons.person, color: Colors.white),
                               ),
-                              style: TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                           Padding(
@@ -169,7 +181,7 @@ class _loginScreenState extends State<loginScreen> {
                                 focusedBorder: const OutlineInputBorder(
                                   borderSide: BorderSide(color: Colors.white),
                                 ),
-                                label: Text("Contraseña",
+                                label: const Text("Contraseña",
                                     style: TextStyle(color: Colors.white)),
                                 prefixIcon:
                                     const Icon(Icons.key, color: Colors.white),
@@ -190,7 +202,7 @@ class _loginScreenState extends State<loginScreen> {
                                           color: Colors.white),
                                 ),
                               ),
-                              style: TextStyle(color: Colors.white),
+                              style: const TextStyle(color: Colors.white),
                             ),
                           ),
                           Padding(
@@ -209,7 +221,7 @@ class _loginScreenState extends State<loginScreen> {
                                     //   ),
                                     // );
                                   },
-                                  child: Text(
+                                  child: const Text(
                                     "¿Contraseña olvidada?",
                                     style: TextStyle(
                                       fontSize: 18,
@@ -256,7 +268,7 @@ class _loginScreenState extends State<loginScreen> {
                                     ),
                                   ],
                                 ),
-                                child: Center(
+                                child: const Center(
                                   child: Text(
                                     "Iniciar sesión",
                                     style: TextStyle(

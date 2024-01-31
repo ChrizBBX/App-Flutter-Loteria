@@ -11,6 +11,8 @@ public partial class Usuario
 
     public string NombreUsuario { get; set; } = null!;
 
+    public string ImagenUrl { get; set; }
+
     public string? Contrasena { get; set; }
 
     public int PersonaId { get; set; }

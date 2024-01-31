@@ -159,19 +159,41 @@ namespace Numerito.API.Services.Usuarios
         public Result<string> EditarContrasenia(UsuarioDto entidad)
         {
             var listaUsuarios = _context.Usuarios.AsQueryable().ToList();
-           // var validaciones = _rules.EditarUsuarioValidaciones(listaUsuarios, entidad.UsuarioId);
 
-           //if (!validaciones.Ok)
-           //    return Result<string>.Fault(validaciones.Message);
+            Encrypt encrypt = new Encrypt();
+            var password = encrypt.HashPassword(entidad.Contrasena);
+
 
             var usuario = listaUsuarios.FirstOrDefault(x => x.UsuarioId == entidad.UsuarioId);
             if (usuario == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);
 
-            usuario.Estado = false;
+            usuario.Contrasena = password;
+            usuario.UsuarioModificacion = entidad.UsuarioModificacion;
+            usuario.FechaModificacion = entidad.FechaModificacion;
+
             _context.Usuarios.Update(usuario);
             _context.SaveChanges();
 
-            return Result<string>.Success(OutputMessage.SuccessDisableUsuario);
+            return Result<string>.Success(OutputMessage.SuccessUpdateUsuario);
+        }
+
+        public Result<string> EditarImagen(UsuarioDto entidad)
+        {
+            var listaUsuarios = _context.Usuarios.AsQueryable().ToList();
+            
+            
+
+            var usuario = listaUsuarios.FirstOrDefault(x => x.UsuarioId == entidad.UsuarioId);
+            if (usuario == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);
+
+            //usuario.ImagenUrl = entidad.ImagenUrl;
+            usuario.UsuarioModificacion = entidad.UsuarioModificacion;
+            usuario.FechaModificacion = entidad.FechaModificacion;
+
+            _context.Usuarios.Update(usuario);
+            _context.SaveChanges();
+
+            return Result<string>.Success(OutputMessage.SuccessUpdateUsuario);
         }
     }
 }
