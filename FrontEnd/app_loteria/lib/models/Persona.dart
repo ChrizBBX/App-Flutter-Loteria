@@ -1,5 +1,5 @@
 class Persona {
-  final int personaId;
+  late final int personaId;
   final String nombres;
   final String? apellidos;
   final String? identidad;

@@ -27,6 +27,29 @@ namespace Numerito.API.Services.Usuarios
             _mapper = mapper;
         }
 
+        public Result<List<UsuarioDto>> Listado()
+        {
+
+            var result = (from Usuario in _context.Usuarios.AsQueryable().Where(x => x.Estado == true)
+                          select new UsuarioDto
+                          {
+                              UsuarioId = Usuario.UsuarioId,
+                              NombreUsuario = Usuario.NombreUsuario,
+                              
+                              PersonaId = Usuario.PersonaId,
+                              SucursalId = Usuario.SucursalId,
+                              Admin = Usuario.Admin,
+
+                          }
+                          ).ToList();
+
+            if (result.Count < 1)
+                return Result<List<UsuarioDto>>.Success(new List<UsuarioDto>());
+
+
+            return Result<List<UsuarioDto>>.Success(result);
+        }
+
         public Result<List<UsuarioDto>> Login(UsuarioDtoL entidad)
         {
             Encrypt encrypt = new Encrypt();
@@ -68,6 +91,7 @@ namespace Numerito.API.Services.Usuarios
 
             UsuarioValidations validator = new UsuarioValidations();
             validator.RuleFor(x => x.UsuarioCreacion).NotEmpty().WithMessage("Campo UsuarioCreacion Invalido");
+            validator.RuleFor(x => x.Contrasena).NotEmpty().WithMessage("Campo contraseña Invalido");
 
             ValidationResult validationResult = validator.Validate(usuario);
 
@@ -100,46 +124,42 @@ namespace Numerito.API.Services.Usuarios
             Encrypt encrypt = new Encrypt();
             var password = encrypt.HashPassword(entidad.Contrasena);
 
-            var usuario = _mapper.Map<Usuario>(entidad);
 
             UsuarioValidations validator = new UsuarioValidations();
             validator.RuleFor(x => x.UsuarioModificacion).NotEmpty().WithMessage("Campo UsuarioModificacion Invalido");
 
-            ValidationResult validationResult = validator.Validate(usuario);
 
-            if (!validationResult.IsValid)
+
+            var listaUsuarios = _context.Usuarios.AsQueryable().ToList().Where(x => x.Estado == true);
+
+            
+            var usuario = listaUsuarios.FirstOrDefault(x => x.UsuarioId == entidad.UsuarioId);
+            if (usuario == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);
+
+            usuario.Contrasena = password;
+            usuario.UsuarioModificacion = usuario.UsuarioModificacion;
+            usuario.FechaModificacion = entidad.FechaModificacion;
+            usuario.NombreUsuario = usuario.NombreUsuario;
+
+            if (!string.IsNullOrEmpty(usuario.Contrasena))
             {
-                IEnumerable<string> Errors = validationResult.Errors.Select(s => s.ErrorMessage);
-                string menssageValidation = string.Join(Environment.NewLine, Errors);
-                return Result<string>.Fault(menssageValidation, OutputMessage.FaultEntityUsuario);
+                usuario.Contrasena = password;
             }
 
-            var listaUsuarios = _context.Usuarios.AsQueryable().Where(x => x.Estado == true).ToList();
-            var listaSucursales = _context.Sucursales.AsQueryable().Where(x => x.Estado == true).ToList();
+            usuario.PersonaId = usuario.PersonaId;
+            usuario.SucursalId = usuario.SucursalId == 0 ? null : usuario.SucursalId;
+            usuario.UsuarioModificacion = usuario.UsuarioModificacion;
+            usuario.FechaModificacion = usuario.FechaModificacion ?? DateTime.Now;
+            _context.Usuarios.Update(usuario);
+            _context.SaveChanges();
 
-            var validaciones = _rules.EditarUsuarioValidaciones(usuario,listaUsuarios,listaSucursales);
-            if (!validaciones.Ok)
-                return Result<string>.Fault(validaciones.Message);
-
-            var original = listaUsuarios.FirstOrDefault(x => x.UsuarioId == usuario.UsuarioId);
-            if (original == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);
-
-            original.NombreUsuario = usuario.NombreUsuario;
-            original.Contrasena = password;
-            original.PersonaId = usuario.PersonaId;
-            original.SucursalId = usuario.SucursalId == 0 ? null : usuario.SucursalId;
-            original.UsuarioModificacion = usuario.UsuarioModificacion;
-            original.FechaModificacion = usuario.FechaModificacion;
-
-
-                _context.Usuarios.Update(original);
-                _context.SaveChanges();
-            
             return Result<string>.Success(OutputMessage.SuccessUpdateUsuario);
         }
 
+
         public Result<string> DesactivarUsuarios(int usuarioId)
         {
+
             var listaUsuarios = _context.Usuarios.AsQueryable().ToList();
             var validaciones = _rules.DesactivarUsuarioValidaciones(listaUsuarios, usuarioId);
 
@@ -163,12 +183,11 @@ namespace Numerito.API.Services.Usuarios
             Encrypt encrypt = new Encrypt();
             var password = encrypt.HashPassword(entidad.Contrasena);
 
-
             var usuario = listaUsuarios.FirstOrDefault(x => x.UsuarioId == entidad.UsuarioId);
             if (usuario == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);
 
             usuario.Contrasena = password;
-            usuario.UsuarioModificacion = entidad.UsuarioModificacion;
+            usuario.UsuarioModificacion = usuario.UsuarioModificacion;
             usuario.FechaModificacion = entidad.FechaModificacion;
 
             _context.Usuarios.Update(usuario);

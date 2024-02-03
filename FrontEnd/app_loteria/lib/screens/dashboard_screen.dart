@@ -1,5 +1,9 @@
 import 'package:app_loteria/screens/persona/createperonsa_screen.dart';
 import 'package:app_loteria/screens/persona/listpersona_screen.dart';
+import 'package:app_loteria/screens/reportes/reporteInventario_screen.dart';
+import 'package:app_loteria/screens/reportes/reporteNumerosVendidos_screen.dart';
+import 'package:app_loteria/screens/usuario/listusuario_screen.dart';
+import 'package:app_loteria/utils/ColorPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -26,6 +30,7 @@ class _CardListWidgetState extends State<CardListWidget> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Wrap(
       alignment: WrapAlignment.center,
@@ -33,12 +38,12 @@ class _CardListWidgetState extends State<CardListWidget> {
       runSpacing: 16.0,
       children: [
         Container(
-          margin: EdgeInsets.all(8.0),
+          margin: const EdgeInsets.all(8.0),
           height: 140,
           width: 430,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8.0),
-            image: DecorationImage(
+            image: const DecorationImage(
               image: AssetImage("images/Wallpaper_Login.jpg"),
               fit: BoxFit.cover,
             ),
@@ -52,7 +57,7 @@ class _CardListWidgetState extends State<CardListWidget> {
                 child: Text(
                   'Bienvenido $nombreUsuario',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontFamily: 'RobotoMono',
@@ -67,7 +72,7 @@ class _CardListWidgetState extends State<CardListWidget> {
                 child: Text(
                   _getCurrentTime(),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 30.0,
                     fontFamily: 'RobotoMono',
@@ -79,12 +84,12 @@ class _CardListWidgetState extends State<CardListWidget> {
         ),
         GestureDetector(
           onTap: () {
-             Navigator.push(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ListPersonaScreen()),
             );
           },
-          child: CardWidget(  
+          child: CardWidget(
             title: 'Personas',
             color: Colors.blue.shade400,
             icon: Icons.person,
@@ -92,27 +97,33 @@ class _CardListWidgetState extends State<CardListWidget> {
         ),
         GestureDetector(
           onTap: () {
-            print("Tocaste la tarjeta 'Tarjeta 2'");
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ListUsuarioScreen()),
+            );
           },
           child: CardWidget(
-            title: 'Tarjeta 2',
+            title: 'Usuarios',
             color: Colors.red.shade400,
-            icon: Icons.add,
+            icon: Icons.supervised_user_circle_outlined,
           ),
         ),
         GestureDetector(
           onTap: () {
-            print("Tocaste la tarjeta 'Tarjeta 3'");
+            opciones(context);
           },
           child: CardWidget(
-            title: 'Tarjeta 3',
+            title: 'Reportes',
             color: Colors.purple.shade600,
-            icon: Icons.emoji_events_outlined,
+            icon: Icons.picture_as_pdf_outlined,
           ),
         ),
         GestureDetector(
           onTap: () {
-            print("Tocaste la tarjeta 'Tarjeta 4'");
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ReportePDFInventario()),
+            );
           },
           child: CardWidget(
             title: 'Tarjeta 4',
@@ -131,6 +142,90 @@ class _CardListWidgetState extends State<CardListWidget> {
   }
 }
 
+opciones(context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        contentPadding: const EdgeInsets.all(0),
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ReportePDFInventario()),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: 1,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: const [
+                      Expanded(
+                        child: Text(
+                          'Reporte de Inventario',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Icon(
+                        Icons.document_scanner,
+                        color: ColorPalette.darkblueColorApp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ReportePDFNumerosVendidos()),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: 1,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: const [
+                      Expanded(
+                        child: Text(
+                          'Reporte de Numeros Vendidos',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Icon(
+                        Icons.document_scanner,
+                        color: ColorPalette.darkblueColorApp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+}
+
 class CardWidget extends StatelessWidget {
   final String title;
   final Color color;
@@ -145,7 +240,7 @@ class CardWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(8.0),
+      margin: const EdgeInsets.all(8.0),
       height: 140,
       width: 140,
       decoration: BoxDecoration(
@@ -161,10 +256,10 @@ class CardWidget extends StatelessWidget {
             color: Colors.white,
             size: 40.0,
           ),
-          SizedBox(height: 10.0),
+          const SizedBox(height: 10.0),
           Text(
             title,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.white,
               fontSize: 18.0,
               fontWeight: FontWeight.normal,

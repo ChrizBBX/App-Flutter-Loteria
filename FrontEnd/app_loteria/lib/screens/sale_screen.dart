@@ -1,6 +1,5 @@
 import 'dart:convert';
-import 'package:app_loteria/models/MetodoPago.dart';
-import 'package:app_loteria/models/Persona.dart';
+
 import 'package:app_loteria/models/Venta.dart';
 import 'package:app_loteria/toastconfig/toastconfig.dart';
 import 'package:app_loteria/utils/colorPalette.dart';
@@ -13,6 +12,69 @@ import 'package:http/http.dart' as http;
 class SaleScreen extends StatefulWidget {
   @override
   _SaleScreenState createState() => _SaleScreenState();
+}
+
+class Persona {
+  final int personaId;
+  final String nombres;
+  final String? apellidos;
+  final String? identidad;
+
+  Persona({
+    required this.personaId,
+    required this.nombres,
+    this.apellidos,
+    this.identidad,
+  });
+
+  factory Persona.fromJson(Map<String, dynamic> json) {
+    return Persona(
+      personaId: json['personaId'] as int,
+      nombres: json['nombres'] as String,
+      apellidos: json['apellidos'] as String?,
+      identidad: json['identidad'] as String?,
+    );
+  }
+
+  // Cambia el nombre de las propiedades
+  int get id => personaId;
+  String get descripcion => '$nombres ${apellidos ?? ''}';
+
+  Map<String, dynamic> toJson() {
+    return {
+      "personaId": personaId,
+      "nombres": nombres,
+      "apellidos": apellidos,
+      "identidad": identidad,
+    };
+  }
+}
+
+class MetodoPago {
+  final int metodoPagoId;
+  final String descripcion;
+
+  MetodoPago({
+    required this.metodoPagoId,
+    required this.descripcion,
+  });
+
+  factory MetodoPago.fromJson(Map<String, dynamic> json) {
+    return MetodoPago(
+      metodoPagoId: json['metodoPagoId'] as int,
+      descripcion: json['descripcion'] as String,
+    );
+  }
+
+  // Cambia el nombre de las propiedades
+  int get id => metodoPagoId;
+
+  Map<String, dynamic> toJson() {
+    return {
+      "metodoPagoId": metodoPagoId,
+      "descripcion": descripcion,
+    };
+  }
 }
 
 class _SaleScreenState extends State<SaleScreen> {
@@ -177,9 +239,8 @@ class _SaleScreenState extends State<SaleScreen> {
             ),
             ...items.map((item) {
               return DropdownMenuItem<int>(
-                value: item.id, // Reemplaza 'id' con la propiedad correcta
-                child: Text(item
-                    .descripcion), // Reemplaza 'descripcion' con la propiedad correcta
+                value: item.id,
+                child: Text(item.descripcion),
               );
             }),
           ],
@@ -434,52 +495,49 @@ class _SaleScreenState extends State<SaleScreen> {
 
   Future<void> fetchData() async {
     try {
-      final response = await http.get(Uri.parse('${apiUrl}Persona/Listado'));
-      final response2 =
+      final responsePersona =
+          await http.get(Uri.parse('${apiUrl}Persona/Listado'));
+      final responseMetodoPago =
           await http.get(Uri.parse('${apiUrl}MetodoPago/Listado'));
 
-      if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body)['data'];
-        List<Persona> fetchedPersonas = data.map((json) {
-          json['fechaCreacion'] = DateTime.parse(json['fechaCreacion']);
-          json['fechaModificacion'] = json['fechaModificacion'] != null
-              ? DateTime.parse(json['fechaModificacion'])
-              : null;
-          return Persona.fromJson(json);
-        }).toList();
+      if (responsePersona.statusCode == 200) {
+        final List<dynamic> dataPersona =
+            json.decode(responsePersona.body)['data'];
+        List<Persona> fetchedPersonas =
+            dataPersona.map((json) => Persona.fromJson(json)).toList();
 
         setState(() {
           personas = fetchedPersonas;
           selectedPerson =
               fetchedPersonas.isNotEmpty ? fetchedPersonas.first.personaId : 0;
         });
+
+        print(personas);
       } else {
-        print('Error en la solicitud HTTP: ${response.statusCode}');
+        print(
+            'Error en la solicitud HTTP para Persona/Listado: ${responsePersona.statusCode}');
       }
 
-      if (response2.statusCode == 200) {
-        final List<dynamic> data = json.decode(response2.body)['data'];
-        List<MetodoPago> fetchedmetodosPago = data.map((json) {
-          json['fechaCreacion'] = DateTime.parse(json['fechaCreacion']);
-          json['fechaModificacion'] = json['fechaModificacion'] != null
-              ? DateTime.parse(json['fechaModificacion'])
-              : null;
-          return MetodoPago.fromJson(json);
-        }).toList();
+      if (responseMetodoPago.statusCode == 200) {
+        final List<dynamic> dataMetodoPago =
+            json.decode(responseMetodoPago.body)['data'];
+        List<MetodoPago> fetchedMetodosPago =
+            dataMetodoPago.map((json) => MetodoPago.fromJson(json)).toList();
 
         setState(() {
-          metodosPago = fetchedmetodosPago;
-          selectedPaymentMethod = fetchedmetodosPago.isNotEmpty
-              ? fetchedmetodosPago.first.metodoPagoId
+          metodosPago = fetchedMetodosPago;
+          selectedPaymentMethod = fetchedMetodosPago.isNotEmpty
+              ? fetchedMetodosPago.first.metodoPagoId
               : 0;
         });
 
         print(metodosPago.toString());
       } else {
-        print('Error en la solicitud HTTP: ${response2.statusCode}');
+        print(
+            'Error en la solicitud HTTP para MetodoPago/Listado: ${responseMetodoPago.statusCode}');
       }
     } catch (e) {
-      print('Error: $e');
-    } finally {}
+      print('Error en fetchData: $e');
+    }
   }
 }

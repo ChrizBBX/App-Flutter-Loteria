@@ -5,6 +5,8 @@ using Numerito.API.Services.Cierres;
 using Numerito.API.Services.MetodosPagos;
 using Numerito.API.Services.Numeros;
 using Numerito.API.Services.Personas;
+using Numerito.API.Services.Reportes;
+using Numerito.API.Services.Sucursales;
 using Numerito.API.Services.Usuarios;
 using Numerito.API.Services.Ventas;
 
@@ -43,6 +45,11 @@ builder.Services.AddTransient<PersonaService>();
 builder.Services.AddTransient<PersonaRules>();
 builder.Services.AddTransient<NumeroService>();
 builder.Services.AddTransient<NumeroRules>();
+builder.Services.AddTransient<SucursalService>();
+builder.Services.AddTransient<SucursalRules>();
+builder.Services.AddTransient<ReportesService>();
+
+
 
 
 

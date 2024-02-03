@@ -2,20 +2,82 @@
 
 import 'dart:convert';
 import 'package:app_loteria/models/Usuario.dart';
-import 'package:app_loteria/screens/persona/editpersona_screen.dart';
+import 'package:app_loteria/screens/usuario/createusuario_screen.dart';
+import 'package:app_loteria/screens/usuario/editusuario_screen.dart';
 import 'package:app_loteria/toastconfig/toastconfig.dart';
 import 'package:app_loteria/utils/colorPalette.dart';
 import 'package:app_loteria/widgets/appbar_roots.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:app_loteria/api.dart';
-import 'package:app_loteria/models/Persona.dart';
-import 'package:app_loteria/screens/persona/createperonsa_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ListPersonaScreen extends StatefulWidget {
+class Usuarios {
+  final int usuarioId;
+  final String nombreUsuario;
+  final String? contrasena;
+  final int personaId;
+  final int? sucursalId;
+  final int? usuarioCreacion;
+  final DateTime fechaCreacion;
+  final int? usuarioModificacion;
+  final DateTime? fechaModificacion;
+  final bool? estado;
+  final bool admin;
+
+  Usuarios({
+    required this.usuarioId,
+    required this.nombreUsuario,
+    required this.contrasena,
+    required this.personaId,
+    this.sucursalId,
+    this.usuarioCreacion,
+    required this.fechaCreacion,
+    this.usuarioModificacion,
+    this.fechaModificacion,
+    this.estado,
+    required this.admin,
+  });
+
+  factory Usuarios.fromJson(Map<String, dynamic> json) {
+    return Usuarios(
+      usuarioId: json['usuarioId'] as int,
+      nombreUsuario: json['nombreUsuario'] as String,
+      contrasena: json['contrasena'] as String?,
+      personaId: json['personaId'] as int,
+      sucursalId: json['sucursalId'] as int?,
+      usuarioCreacion: json['usuarioCreacion'] as int?,
+      fechaCreacion: json['fechaCreacion'] as DateTime,
+      usuarioModificacion: json['usuarioModificacion'] as int?,
+      fechaModificacion: json['fechaModificacion'] != null
+          ? json['fechaModificacion'] as DateTime
+          : null,
+      estado: json['estado'] as bool?,
+      admin: json['admin'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "usuarioId": usuarioId,
+      "nombreUsuario": nombreUsuario,
+      "contrasena": contrasena,
+      "personaId": personaId,
+      "sucursalId": sucursalId,
+      "usuarioCreacion": usuarioCreacion,
+      "admin": admin,
+      "UsuarioCreacion": usuarioCreacion,
+      "FechaCreacion": fechaCreacion.toIso8601String(),
+      "UsuarioModificacion": usuarioModificacion,
+      "FechaModificacion": fechaModificacion?.toIso8601String() ?? null,
+      "Estado": estado,
+    };
+  }
+}
+
+class ListUsuarioScreen extends StatefulWidget {
   @override
-  _ListPersonaScreenState createState() => _ListPersonaScreenState();
+  _ListUsuarioScreenState createState() => _ListUsuarioScreenState();
 }
 
 class UserDataProvider {
@@ -36,37 +98,37 @@ class UserDataProvider {
   }
 }
 
-class _ListPersonaScreenState extends State<ListPersonaScreen> {
-  List<Persona> personas = [];
-  List<Persona> filteredPersonas = [];
+class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
+  List<Usuarios> usuarios = [];
+  List<Usuarios> filteredUsuarios = [];
   late Usuario _userProfile;
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _fetchPersonList();
+    _fetchUserList();
     _loadUserData();
   }
 
-  Future<void> _fetchPersonList() async {
+  Future<void> _fetchUserList() async {
     try {
-      final response = await http.get(Uri.parse('${apiUrl}Persona/Listado'));
+      final response = await http.get(Uri.parse('${apiUrl}Usuario/Listado'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body)['data'];
 
         setState(() {
-          personas = data.map((item) {
+          usuarios = data.map((item) {
             // Convertir las fechas de String a DateTime
             item['fechaCreacion'] = DateTime.parse(item['fechaCreacion']);
             item['fechaModificacion'] = item['fechaModificacion'] != null
                 ? DateTime.parse(item['fechaModificacion'])
                 : null;
 
-            return Persona.fromJson(item);
+            return Usuarios.fromJson(item);
           }).toList();
-          filteredPersonas = List.from(personas);
+          filteredUsuarios = List.from(usuarios);
         });
       } else {
         // Manejar el error de la solicitud HTTP
@@ -86,16 +148,15 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
     });
   }
 
-  void _filterPersonas(String query) {
+  void _filterUsuarios(String query) {
     setState(() {
-      filteredPersonas = personas
-          .where((persona) =>
-              persona.nombres.toLowerCase().contains(query.toLowerCase()) ||
-              (persona.apellidos != null &&
-                  persona.apellidos!
-                      .toLowerCase()
-                      .contains(query.toLowerCase())) ||
-              (persona.identidad != null && persona.identidad!.contains(query)))
+      filteredUsuarios = usuarios
+          .where((usuario) =>
+              usuario.nombreUsuario
+                  .toLowerCase()
+                  .contains(query.toLowerCase()) ||
+              (usuario.personaId.toString().contains(query)) ||
+              (usuario.sucursalId.toString().contains(query)))
           .toList();
     });
   }
@@ -103,7 +164,7 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWithBackButton(
-        title: 'Listado de Personas',
+        title: 'Listado de Usuarios',
         profileImageUrl: _userProfile.imagen,
         onProfilePressed: () {},
       ),
@@ -116,7 +177,7 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => NewPersonForm()),
+                MaterialPageRoute(builder: (context) => NewUserForm()),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -140,7 +201,7 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: searchController,
-              onChanged: _filterPersonas,
+              onChanged: _filterUsuarios,
               decoration: InputDecoration(
                 labelText: 'Buscar',
                 border: OutlineInputBorder(
@@ -151,16 +212,15 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: filteredPersonas.length,
+              itemCount: filteredUsuarios.length,
               itemBuilder: (context, index) {
-                final persona = filteredPersonas[index];
+                final usuario = filteredUsuarios[index];
 
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    title:
-                        Text('${persona.nombres} ${persona.apellidos ?? ''}'),
-                    subtitle: Text('Identidad: ${persona.identidad ?? 'N/A'}'),
+                    title: Text('Nombre de Usuario: ${usuario.nombreUsuario}'),
+                    subtitle: Text('ID de Persona: ${usuario.personaId}'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -172,11 +232,12 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
                           ),
                           child: IconButton(
                             onPressed: () {
+                              // Navegar a la pantalla de edición de usuario
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      EditPersonForm(persona: persona),
+                                      EditUserForm(usuario: usuario),
                                 ),
                               );
                             },
@@ -192,7 +253,7 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
                           ),
                           child: IconButton(
                             onPressed: () => _showDeleteConfirmationDialog(
-                                persona.personaId),
+                                usuario.usuarioId.toString()),
                             icon: const Icon(Icons.delete),
                           ),
                         ),
@@ -208,14 +269,14 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
     );
   }
 
-  void _showDeleteConfirmationDialog(int personaId) {
+  void _showDeleteConfirmationDialog(String? usuarioId) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Eliminar Persona'),
+          title: const Text('Eliminar Usuario'),
           content:
-              const Text('¿Estás seguro de que quieres eliminar esta persona?'),
+              const Text('¿Estás seguro de que quieres eliminar este usuario?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -225,8 +286,10 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                _deletePersona(personaId);
-                Navigator.of(context).pop();
+                if (usuarioId != null) {
+                  _deleteUsuario(int.parse(usuarioId));
+                  Navigator.of(context).pop();
+                }
               },
               child: const Text('Eliminar'),
             ),
@@ -236,29 +299,26 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
     );
   }
 
-  void _deletePersona(int personaId) async {
+  void _deleteUsuario(int usuarioId) async {
     try {
       final response =
-          await http.delete(Uri.parse('${apiUrl}Persona/Eliminar/$personaId'));
+          await http.put(Uri.parse('${apiUrl}Usuario/DesactivarUsuarios?usuarioId=$usuarioId'));
 
       if (response.statusCode == 200) {
-        // Actualizar la lista después de eliminar la persona
-        _fetchPersonList();
-        CherryToast.success(title: const Text('Persona eliminada exitosamente'))
+        _fetchUserList();
+        CherryToast.success(title: const Text('Usuario eliminado exitosamente'))
             .show(context);
       } else {
-        // Manejar el error de la solicitud HTTP
         print(
-            'Error en la solicitud HTTP para eliminar persona: ${response.statusCode}');
+            'Error en la solicitud HTTP para eliminar usuario: ${response.statusCode}');
         CherryToast.warning(
-                title: const Text('Error al intentar eliminar la persona'))
+                title: const Text('Error al intentar eliminar el usuario'))
             .show(context);
       }
     } catch (e) {
-      // Manejar errores de red u otros
       print('Error: $e');
       CherryToast.warning(
-              title: const Text('Error al intentar eliminar la persona'))
+              title: const Text('Error al intentar eliminar el usuario'))
           .show(context);
     }
   }

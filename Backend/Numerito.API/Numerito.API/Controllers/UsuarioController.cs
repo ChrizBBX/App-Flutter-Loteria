@@ -1,6 +1,7 @@
 ﻿using LoteriaApp.WebApi.Services.Usuarios.UsuarioDto;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Numerito.API.Services.Personas;
 using Numerito.API.Services.Usuarios;
 using Numerito.API.Services.Usuarios.UsuariosDto;
 
@@ -15,6 +16,13 @@ namespace Numerito.API.Controllers
         public UsuarioController(UsuarioService usuarioService)
         {
                 _usuarioService = usuarioService;
+        }
+
+        [HttpGet("Listado")]
+        public IActionResult Listado()
+        {
+            var result = _usuarioService.Listado();
+            return Ok(result);
         }
 
         [HttpPost("Login")]

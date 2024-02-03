@@ -27,6 +27,26 @@ class Usuario {
     this.estado,
   });
 
+
+factory Usuario.fromJson(Map<String, dynamic> json) {
+  return Usuario(
+    usuarioId: json['usuarioId'],
+    nombreUsuario: json['nombreUsuario'],
+    contrasena: json['contrasena'],
+    imagen: json['imagen'],
+    personaId: json['personaId'],
+    sucursalId: json['sucursalId'],
+    admin: json['admin'] ?? false,
+    usuarioCreacion: json['usuarioCreacion'],
+    fechaCreacion: DateTime.parse(json['fechaCreacion']),
+    usuarioModificacion: json['usuarioModificacion'],
+    fechaModificacion: json['fechaModificacion'] != null
+        ? DateTime.parse(json['fechaModificacion'])
+        : null,
+    estado: json['estado'],
+  );
+}
+
   Map<String, dynamic> toJson() {
     return {
       "usuarioId": usuarioId,

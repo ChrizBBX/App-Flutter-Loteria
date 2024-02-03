@@ -58,7 +58,6 @@ public partial class Usuario
         public UsuarioValidations()
         {
             RuleFor(x => x.NombreUsuario).NotEmpty().MaximumLength(150).WithMessage("Campo nombre Invalido");
-            RuleFor(x => x.Contrasena).NotEmpty().WithMessage("Campo contraseña Invalido");
             RuleFor(x => x.PersonaId).NotEmpty().WithMessage("Campo persona Invalido");
         }
     }

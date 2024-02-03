@@ -5,11 +5,8 @@ import 'package:app_loteria/screens/home_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-//import 'package:simexpro/screens/recover_password_screen.dart';
-//import 'package:simexpro/widgets/navbar_roots.dart';
 import 'package:http/http.dart' as http;
 import 'package:app_loteria/utils/ColorPalette.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:app_loteria/api.dart';
 import 'package:app_loteria/toastconfig/toastconfig.dart';
 
@@ -213,13 +210,7 @@ class _loginScreenState extends State<loginScreen> {
                               children: [
                                 TextButton(
                                   onPressed: () {
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(
-                                    //     builder: (context) =>
-                                    //         RecoverPasswordScreen(),
-                                    //   ),
-                                    // );
+                                    
                                   },
                                   child: const Text(
                                     "¿Contraseña olvidada?",
