@@ -56,9 +56,6 @@ class _ReportePDFInventarioState extends State<ReportePDFInventario> {
     final pw.Document pdf = pw.Document();
     if (_data.isNotEmpty) {
       final List<dynamic>? dataList = _data[0]['data'] as List<dynamic>?;
-      final netImage =
-      //     await networkImage('https://i.ibb.co/dP0sMXh/Logo-Blanco.png');
-      // await Future.delayed(Duration(seconds: 10));
 
       pdf.addPage(
         pw.MultiPage(
@@ -69,11 +66,7 @@ class _ReportePDFInventarioState extends State<ReportePDFInventario> {
               child: pw.Column(
                 mainAxisAlignment: pw.MainAxisAlignment.center,
                 children: [
-                  // pw.SizedBox(
-                  //   width: 100,
-                  //   height: 100,
-                  //   child: pw.Image(netImage),
-                  // ),
+                  pw.SizedBox(height: 5.00),
                   pw.Text(
                     'NUMERITO'.toUpperCase(),
                     style: pw.TextStyle(fontSize: 20, color: PdfColors.white),
@@ -101,6 +94,8 @@ class _ReportePDFInventarioState extends State<ReportePDFInventario> {
               pw.Table.fromTextArray(
                 headers: ['Numero', 'Descripcion', 'Limite de Hoy'],
                 data: dataList?.map((row) {
+                          print(row);
+
                       return [
                         row['numeroId']?.toString() ?? '',
                         row['numeroDescripcion']?.toString() ?? '',
@@ -108,7 +103,14 @@ class _ReportePDFInventarioState extends State<ReportePDFInventario> {
                       ];
                     }).toList() ??
                     [],
-                border: pw.TableBorder.all(),
+                 border: const pw.TableBorder(
+                        horizontalInside: pw.BorderSide.none,
+                        verticalInside: pw.BorderSide.none,
+                        bottom: pw.BorderSide.none,
+                        top: pw.BorderSide.none,
+                        left: pw.BorderSide.none,
+                        right: pw.BorderSide.none,
+                      ),
                 headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold),
                 headerDecoration: pw.BoxDecoration(
                   color: PdfColors.cyan,

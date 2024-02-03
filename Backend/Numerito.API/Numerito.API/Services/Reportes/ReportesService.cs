@@ -25,6 +25,10 @@ namespace Numerito.API.Services.Reportes
             public string Identidad { get; set; }
             public string MetodoPagoDescripcion { get; set; }
             public List<DetalleVenta> Detalles { get; set; }
+            public string? DescripcionNumero { get; set; }
+            public int IdNumero { get; set; }
+            public int Cantidad { get; set; }
+
         }
 
         public class DetalleVenta
@@ -62,6 +66,29 @@ namespace Numerito.API.Services.Reportes
 
 
             return Result<List<Numero>>.Success(result);
+        }
+
+        public Result<List<VentaCompleta>> TopNumeros(DateTime fecha_inicio, DateTime fecha_fin)
+        {
+
+            var result = (from ventaDetalle in _context.VentaDetalles.AsQueryable()
+                          join venta in _context.Ventas on ventaDetalle.VentaId equals venta.VentaId
+                          join numero in _context.Numeros on ventaDetalle.NumeroId equals numero.NumeroId
+                          where venta.FechaCreacion >= fecha_inicio && venta.FechaCreacion <= fecha_fin
+                          group new { ventaDetalle, numero } by new { ventaDetalle.NumeroId } into grouped
+                          select new VentaCompleta
+                          {
+                              IdNumero = grouped.Key.NumeroId,
+                              DescripcionNumero = grouped.FirstOrDefault().numero.NumeroDescripcion,
+                              Cantidad = grouped.Count(),
+                          }
+                          ).ToList();
+
+            if (result.Count < 1)
+                return Result<List<VentaCompleta>>.Success(new List<VentaCompleta>());
+
+
+            return Result<List<VentaCompleta>>.Success(result);
         }
 
         public Result<List<VentaCompleta>> NumerosVendidos(DateTime fecha_inicio, DateTime fecha_fin)

@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_declarations
+
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:app_loteria/api.dart';
@@ -11,19 +13,25 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 class ReportePDFNumerosVendidos extends StatefulWidget {
-  const ReportePDFNumerosVendidos({Key? key}) : super(key: key);
+  final DateTime fechaInicio;
+  final DateTime fechaFin;
+
+  const ReportePDFNumerosVendidos({
+    Key? key,
+    required this.fechaInicio,
+    required this.fechaFin,
+  }) : super(key: key);
 
   @override
   _ReportePDFNumerosVendidosState createState() =>
       _ReportePDFNumerosVendidosState();
 }
 
-class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
+class _ReportePDFNumerosVendidosState
+    extends State<ReportePDFNumerosVendidos> {
   late Uint8List _pdfBytes;
   List<Map<String, dynamic>> _data = [];
   bool _isLoading = true;
-  String fecha_inicio = '2024-01-01';
-  String fecha_fin = '2025-01-01';
 
   @override
   void initState() {
@@ -33,8 +41,13 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
 
   Future<void> fetchDataAndGeneratePDF() async {
     try {
+      String formattedFechaInicio =
+          DateFormat('yyyy-dd-MM').format(widget.fechaInicio);
+      String formattedFechaFin =
+          DateFormat('yyyy-dd-MM').format(widget.fechaFin);
+
       final response = await http.get(Uri.parse(
-          '${apiUrl}Reporte/NumerosVendidos?fecha_inicio=${fecha_inicio}&fecha_fin=${fecha_fin}'));
+          '${apiUrl}Reporte/NumerosVendidos?fecha_inicio=$formattedFechaInicio&fecha_fin=$formattedFechaFin'));
 
       if (response.statusCode == 200) {
         dynamic responseData = json.decode(response.body);
@@ -238,15 +251,20 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                backgroundColor: ColorPalette.darkblueColorApp,
+              ),
             )
-          : _pdfBytes.isNotEmpty
-              ? PdfPreview(
-                  build: (format) => _generatePdfPreview(format, _pdfBytes),
-                )
-              : const Center(
-                  child: Text('No se pudo generar el PDF'),
-                ),
+              : _pdfBytes.isNotEmpty
+                  ? PdfPreview(
+                    canChangeOrientation: true,
+                    pdfFileName: 'Copia Facturas',
+                    
+                      build: (format) => _generatePdfPreview(format, _pdfBytes),
+                    )
+                  : const Center(
+                      child: Text('No se pudo generar el PDF'),
+                    ),
     );
   }
 
@@ -256,5 +274,12 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
 }
 
 void main() {
-  runApp(const MaterialApp(home: ReportePDFNumerosVendidos()));
+  runApp(
+    MaterialApp(
+      home: ReportePDFNumerosVendidos(
+        fechaInicio: DateTime.now(),
+        fechaFin: DateTime.now(),
+      ),
+    ),
+  );
 }

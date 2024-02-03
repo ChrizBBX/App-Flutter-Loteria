@@ -1,6 +1,9 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:app_loteria/screens/persona/createperonsa_screen.dart';
 import 'package:app_loteria/screens/persona/listpersona_screen.dart';
 import 'package:app_loteria/screens/reportes/reporteInventario_screen.dart';
+import 'package:app_loteria/screens/reportes/reporteNumerosMasVendidos_screen.dart';
 import 'package:app_loteria/screens/reportes/reporteNumerosVendidos_screen.dart';
 import 'package:app_loteria/screens/usuario/listusuario_screen.dart';
 import 'package:app_loteria/utils/ColorPalette.dart';
@@ -122,7 +125,8 @@ class _CardListWidgetState extends State<CardListWidget> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const ReportePDFInventario()),
+              MaterialPageRoute(
+                  builder: (context) => const ReportePDFInventario()),
             );
           },
           child: CardWidget(
@@ -155,7 +159,8 @@ opciones(context) {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const ReportePDFInventario()),
+                    MaterialPageRoute(
+                        builder: (context) => const ReportePDFInventario()),
                   );
                 },
                 child: Container(
@@ -184,13 +189,9 @@ opciones(context) {
                   ),
                 ),
               ),
-
               InkWell(
                 onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ReportePDFNumerosVendidos()),
-                  );
+                  _mostrarSelectorFechas(context, 2);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(20),
@@ -206,7 +207,37 @@ opciones(context) {
                     children: const [
                       Expanded(
                         child: Text(
-                          'Reporte de Numeros Vendidos',
+                          'Reporte de Facturas',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Icon(
+                        Icons.document_scanner,
+                        color: ColorPalette.darkblueColorApp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  _mostrarSelectorFechas(context, 3);
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: 1,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: const [
+                      Expanded(
+                        child: Text(
+                          'Reporte de Numeros Más Vendidos',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
@@ -224,6 +255,63 @@ opciones(context) {
       );
     },
   );
+}
+
+_mostrarSelectorFechas(BuildContext context, opcion) async {
+  DateTimeRange? picked = await showDateRangePicker(
+    context: context,
+    firstDate: DateTime.now().subtract(Duration(days: 365)),
+    lastDate: DateTime.now(),
+    builder: (BuildContext context, Widget? child) {
+      return Theme(
+        data: ThemeData.light().copyWith(
+          primaryColor: ColorPalette
+              .darkblueColorApp, // Cambia este color según tu preferencia
+          accentColor: ColorPalette
+              .darkblueColorApp, // Cambia este color según tu preferencia
+          colorScheme:
+              ColorScheme.light(primary: ColorPalette.darkblueColorApp),
+          buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
+        ),
+        child: child!,
+      );
+    },
+  );
+
+  if (picked != null && picked.start != null && picked.end != null) {
+    _generarReporte(context, picked.start, picked.end, opcion);
+  }
+}
+
+_generarReporte(context, DateTime fechaInicio, DateTime fechaFin, opcion) {
+  if (fechaInicio != null && fechaFin != null) {
+    switch (opcion) {
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ReportePDFNumerosVendidos(
+              fechaInicio: fechaInicio,
+              fechaFin: fechaFin,
+            ),
+          ),
+        );
+        break;
+
+              case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ReportePDFTopNumeros(
+              fechaInicio: fechaInicio,
+              fechaFin: fechaFin,
+            ),
+          ),
+        );
+        break;
+      default:
+    }
+  }
 }
 
 class CardWidget extends StatelessWidget {
