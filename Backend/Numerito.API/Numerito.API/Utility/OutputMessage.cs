@@ -16,6 +16,7 @@
         #region Personas
         public const string FaultPersonaNotExists = "La persona seleccionada no existe";
         public const string FaultPersonaIdentidadExists = "Ya existe una persona con este número de identidad";
+        public const string SuccessInsertPersona = "La Persona se ha agregado exitosamente";
         public const string SuccessUpdatePersona = "La persona se ha editado exitosamente";
         public const string FaultEntityPersona = "Hay campos vacios o la entidad es invalida";
         public const string SuccessDisablePersona = "La Persona se ha desactivado exitosamente";
