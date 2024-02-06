@@ -90,7 +90,7 @@ namespace Numerito.API.Services.Personas
             _context.Add(persona);
             _context.SaveChanges();
 
-            return Result<string>.Success(OutputMessage.SuccessInsertUsuario);
+            return Result<string>.Success(OutputMessage.SuccessInsertPersona);
         }
 
         public Result<string> EditarPersona(PersonaDto entidad)
@@ -118,6 +118,21 @@ namespace Numerito.API.Services.Personas
             _context.SaveChanges();
 
             return Result<string>.Success(OutputMessage.SuccessUpdatePersona);
+        }
+
+        public Result<string> DesactivarPersona(int PersonaId)
+        {
+
+            var listaUsuarios = _context.Personas.AsQueryable().ToList();
+            
+            var persona = listaUsuarios.FirstOrDefault(x => x.PersonaId == PersonaId);
+            if (persona == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);
+
+            persona.Estado = false;
+            _context.Personas.Update(persona);
+            _context.SaveChanges();
+
+            return Result<string>.Success(OutputMessage.SuccessDisableUsuario);
         }
 
     }

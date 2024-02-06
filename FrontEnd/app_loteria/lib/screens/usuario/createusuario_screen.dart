@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:app_loteria/models/Persona.dart';
 import 'package:app_loteria/models/Sucursal.dart';
 import 'package:app_loteria/models/Usuario.dart';
+import 'package:app_loteria/toastconfig/toastconfig.dart';
 import 'package:app_loteria/utils/colorPalette.dart';
 import 'package:app_loteria/widgets/appbar_roots.dart';
 import 'package:flutter/material.dart';
@@ -38,7 +39,8 @@ class _NewUserFormState extends State<NewUserForm> {
   List<Persona> personas = [];
   List<Sucursal> sucursales = [];
 
-  final TextEditingController _nombreUsuarioController = TextEditingController();
+  final TextEditingController _nombreUsuarioController =
+      TextEditingController();
   final TextEditingController _contrasenaController = TextEditingController();
   Persona? _selectedPersona;
   Sucursal? _selectedSucursal;
@@ -65,19 +67,15 @@ class _NewUserFormState extends State<NewUserForm> {
 
         setState(() {
           personas = data.map((item) {
-            // Convertir las fechas de String a DateTime
             item['fechaCreacion'] = parseDateTime(item['fechaCreacion']);
-            item['fechaModificacion'] = parseDateTime(item['fechaModificacion']);
+            item['fechaModificacion'] =
+                parseDateTime(item['fechaModificacion']);
 
             return Persona.fromJson(item);
           }).toList();
         });
-      } else {
-        print('Error en la solicitud HTTP: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
 
   void _fetchSucursalList() async {
@@ -92,12 +90,8 @@ class _NewUserFormState extends State<NewUserForm> {
             return Sucursal.fromJson(item);
           }).toList();
         });
-      } else {
-        print('Error en la solicitud HTTP: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
 
   void _loadUserData() async {
@@ -131,7 +125,7 @@ class _NewUserFormState extends State<NewUserForm> {
                       width: 170.0,
                       height: 170.0,
                       child: Image.asset(
-                        'images/AgregarPersona.png',
+                        'images/AgregarUsuario.png',
                         fit: BoxFit.contain,
                       ),
                     ),
@@ -140,7 +134,8 @@ class _NewUserFormState extends State<NewUserForm> {
                 const SizedBox(height: 16.0),
                 TextFormField(
                   controller: _nombreUsuarioController,
-                  decoration: const InputDecoration(labelText: 'Nombre de Usuario'),
+                  decoration:
+                      const InputDecoration(labelText: 'Nombre de Usuario'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Por favor, ingresa el nombre de usuario';
@@ -298,14 +293,40 @@ class _NewUserFormState extends State<NewUserForm> {
       );
 
       if (response.statusCode == 200) {
-        // Usuario agregado exitosamente
-        print('Usuario agregado exitosamente');
-      } else {
-        // Error al agregar el usuario
-        print('Error al agregar el usuario: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+        final decodedJson = jsonDecode(response.body);
+        final respuesta = decodedJson["message"];
+        if (respuesta
+            .toString()
+            .contains("El usuario se ha agregado exitosamente")) {
+          CherryToast.success(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else if (respuesta
+            .toString()
+            .contains("Hay campos vacios o la entidad es invalida")) {
+          CherryToast.warning(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else if (respuesta
+            .toString()
+            .contains("El Usuario seleccionado no existe")) {
+          CherryToast.warning(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        }
+      } else {}
+    } catch (e) {}
   }
 }

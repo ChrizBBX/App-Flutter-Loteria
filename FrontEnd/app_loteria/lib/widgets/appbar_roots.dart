@@ -35,7 +35,7 @@ class AppBarWithBackButton extends StatelessWidget
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
         onPressed: () {
-          Navigator.pop(
+          Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => HomeScreen(),
@@ -47,14 +47,12 @@ class AppBarWithBackButton extends StatelessWidget
         PopupMenuButton<String>(
           onSelected: (value) {
             if (value == 'mi_perfil') {
-              Navigator.pop(
+              Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => ProfileScreen(),
-                ),
+                MaterialPageRoute(builder: (context) => ProfileScreen()),
               );
             } else if (value == 'cerrar_sesion') {
-               Navigator.pushReplacement(
+              Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                   builder: (context) => loginScreen(),
@@ -130,7 +128,6 @@ class AppBarWithoutBackButton extends StatelessWidget
         PopupMenuButton<String>(
           onSelected: (value) {
             if (value == 'mi_perfil') {
-              
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(

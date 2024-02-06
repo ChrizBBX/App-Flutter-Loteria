@@ -23,5 +23,12 @@ namespace Numerito.API.Controllers
             return Ok(result);
         }
 
+        [HttpDelete("EliminarCierre")]
+        public IActionResult EliminarCierre(int id)
+        {
+            var result = _service.EliminarCierre(id);
+            return Ok(result);
+        }
+
     }
 }

@@ -1,9 +1,8 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'dart:convert';
+import 'package:app_loteria/models/Cierre.dart';
 import 'package:app_loteria/models/Usuario.dart';
-import 'package:app_loteria/screens/usuario/createusuario_screen.dart';
-import 'package:app_loteria/screens/usuario/editusuario_screen.dart';
 import 'package:app_loteria/toastconfig/toastconfig.dart';
 import 'package:app_loteria/utils/colorPalette.dart';
 import 'package:app_loteria/widgets/appbar_roots.dart';
@@ -69,15 +68,17 @@ class Usuarios {
       "UsuarioCreacion": usuarioCreacion,
       "FechaCreacion": fechaCreacion.toIso8601String(),
       "UsuarioModificacion": usuarioModificacion,
-      "FechaModificacion": fechaModificacion?.toIso8601String() ?? null,
+      "FechaModificacion": fechaModificacion?.toIso8601String(),
       "Estado": estado,
     };
   }
 }
 
-class ListUsuarioScreen extends StatefulWidget {
+class ListCierreScreen extends StatefulWidget {
+  const ListCierreScreen({super.key});
+
   @override
-  _ListUsuarioScreenState createState() => _ListUsuarioScreenState();
+  _ListCierreScreenState createState() => _ListCierreScreenState();
 }
 
 class UserDataProvider {
@@ -98,37 +99,32 @@ class UserDataProvider {
   }
 }
 
-class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
-  List<Usuarios> usuarios = [];
-  List<Usuarios> filteredUsuarios = [];
+class _ListCierreScreenState extends State<ListCierreScreen> {
+  List<Cierre> cierres = [];
+  List<Cierre> filteredcierres = [];
   late Usuario _userProfile;
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _fetchUserList();
+    _fetchCierreList();
     _loadUserData();
   }
 
-  Future<void> _fetchUserList() async {
+  Future<void> _fetchCierreList() async {
     try {
-      final response = await http.get(Uri.parse('${apiUrl}Usuario/Listado'));
+      final response = await http.get(Uri.parse('${apiUrl}Cierre/Listado'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body)['data'];
 
         setState(() {
-          usuarios = data.map((item) {
-            // Convertir las fechas de String a DateTime
-            item['fechaCreacion'] = DateTime.parse(item['fechaCreacion']);
-            item['fechaModificacion'] = item['fechaModificacion'] != null
-                ? DateTime.parse(item['fechaModificacion'])
-                : null;
-
-            return Usuarios.fromJson(item);
+          cierres = data.map((item) {
+            item['fechaCierre'] = DateTime.parse(item['fechaCierre']);
+            return Cierre.fromJson(item);
           }).toList();
-          filteredUsuarios = List.from(usuarios);
+          filteredcierres = List.from(cierres);
         });
       } else {}
     } catch (e) {}
@@ -142,23 +138,19 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
     });
   }
 
-  void _filterUsuarios(String query) {
+  void _filterCierres(String query) {
     setState(() {
-      filteredUsuarios = usuarios
-          .where((usuario) =>
-              usuario.nombreUsuario
-                  .toLowerCase()
-                  .contains(query.toLowerCase()) ||
-              (usuario.personaId.toString().contains(query)) ||
-              (usuario.sucursalId.toString().contains(query)))
+      filteredcierres = cierres
+          .where((cierre) => cierre.fechaCierre.weekday.toString() == query)
           .toList();
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWithBackButton(
-        title: 'Listado de Usuarios',
+        title: 'Listado de Cierres',
         profileImageUrl: _userProfile.imagen,
         onProfilePressed: () {},
       ),
@@ -169,10 +161,7 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => NewUserForm()),
-              );
+              nuevocierreDialog();
             },
             style: ElevatedButton.styleFrom(
               foregroundColor: Colors.white,
@@ -195,7 +184,7 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: searchController,
-              onChanged: _filterUsuarios,
+              onChanged: _filterCierres,
               decoration: InputDecoration(
                 labelText: 'Buscar',
                 border: OutlineInputBorder(
@@ -206,40 +195,19 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: filteredUsuarios.length,
+              itemCount: filteredcierres.length,
               itemBuilder: (context, index) {
-                final usuario = filteredUsuarios[index];
+                final cierre = filteredcierres[index];
 
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    title: Text('Nombre de Usuario: ${usuario.nombreUsuario}'),
-                    subtitle: Text('ID de Persona: ${usuario.personaId}'),
+                    title: Text('Número Ganador: ${cierre.numeroId}'),
+                    subtitle: Text('Fecha: ${cierre.fechaCierre.weekday}'),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        // Botón de Editar con fondo amarillo
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.amber,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: IconButton(
-                            onPressed: () {
-                              // Navegar a la pantalla de edición de usuario
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      EditUserForm(usuario: usuario),
-                                ),
-                              );
-                            },
-                            icon: const Icon(Icons.edit),
-                          ),
-                        ),
                         const SizedBox(width: 8.0),
-                        // Botón de Eliminar con fondo rojo
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.red,
@@ -247,7 +215,7 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
                           ),
                           child: IconButton(
                             onPressed: () => _showDeleteConfirmationDialog(
-                                usuario.usuarioId.toString()),
+                                cierre.cierreId.toString()),
                             icon: const Icon(Icons.delete),
                           ),
                         ),
@@ -263,14 +231,14 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
     );
   }
 
-  void _showDeleteConfirmationDialog(String? usuarioId) {
+  void _showDeleteConfirmationDialog(String? id) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Eliminar Usuario'),
+          title: const Text('Eliminar Cierre'),
           content:
-              const Text('¿Estás seguro de que quieres eliminar este usuario?'),
+              const Text('¿Estás seguro de que quieres eliminar este Cierre?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -280,8 +248,8 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                if (usuarioId != null) {
-                  _deleteUsuario(int.parse(usuarioId));
+                if (id != null) {
+                  _deleteCierre(int.parse(id));
                   Navigator.of(context).pop();
                 }
               },
@@ -293,17 +261,114 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
     );
   }
 
-  void _deleteUsuario(int usuarioId) async {
+  void nuevocierreDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        TextEditingController _numController = TextEditingController();
+
+        return AlertDialog(
+          title: const Text('Nuevo Cierre'),
+          contentPadding: const EdgeInsets.all(10.0),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _numController,
+                keyboardType: TextInputType.number,
+                maxLength: 2,
+                decoration: const InputDecoration(
+                  labelText: 'Número',
+                  counterText: '',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                _NuevoCierre(_numController.text);
+                Navigator.of(context).pop();
+              },
+              child: const Text('Guardar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _NuevoCierre(num) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    Cierre userData = Cierre(
+      cierreId: 0,
+      usuarioId: prefs.getInt('usuarioId') ?? 0,
+      numeroId: int.parse(num),
+      fechaCierre: DateTime.now(),
+    );
+
+    String userJson = jsonEncode(userData);
+
     try {
-      final response = await http.put(Uri.parse(
-          '${apiUrl}Usuario/DesactivarUsuarios?usuarioId=$usuarioId'));
+      final response = await http.post(
+        Uri.parse('${apiUrl}Cierre/AgregarCierre'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: userJson,
+      );
 
       if (response.statusCode == 200) {
         final decodedJson = jsonDecode(response.body);
         final respuesta = decodedJson["message"];
+        if (respuesta.toString().contains("El cierre")) {
+          CherryToast.success(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else if (respuesta.toString().contains("Ya se han realizado")) {
+          CherryToast.warning(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else {
+          CherryToast.error(
+            title: Text('Ha ocurrido un error Inesperado',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        }
+      } else {}
+    } catch (e) {}
+  }
+
+  void _deleteCierre(int id) async {
+    try {
+      final response =
+          await http.delete(Uri.parse('${apiUrl}Cierre/EliminarCierre?id=$id'));
+
+      if (response.statusCode == 200) {
+        _fetchCierreList();
+        final decodedJson = jsonDecode(response.body);
+        final respuesta = decodedJson["message"];
         if (respuesta
             .toString()
-            .contains("El usuario se ha desactivado exitosamente")) {
+            .contains("Se ha eliminado el cierre exitosamente")) {
           CherryToast.success(
             title: Text('$respuesta',
                 style:
@@ -313,7 +378,7 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
           ).show(context);
         } else if (respuesta
             .toString()
-            .contains("Hay campos vacios o la entidad es invalida")) {
+            .contains("El cierre seleccionado no existe")) {
           CherryToast.warning(
             title: Text('$respuesta',
                 style:
@@ -321,11 +386,9 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
                 textAlign: TextAlign.start),
             borderRadius: 5,
           ).show(context);
-        } else if (respuesta
-            .toString()
-            .contains("El Usuario seleccionado no existe")) {
-          CherryToast.warning(
-            title: Text('$respuesta',
+        } else {
+          CherryToast.error(
+            title: Text('Ha ocurrido un error Inesperado',
                 style:
                     const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
                 textAlign: TextAlign.start),
@@ -333,10 +396,6 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
           ).show(context);
         }
       } else {}
-    } catch (e) {
-      CherryToast.warning(
-              title: const Text('Error al intentar eliminar el usuario'))
-          .show(context);
-    }
+    } catch (e) {}
   }
 }

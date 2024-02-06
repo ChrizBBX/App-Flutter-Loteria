@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:app_loteria/api.dart';
+import 'package:app_loteria/screens/home_screen.dart';
 import 'package:app_loteria/utils/colorPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,22 +13,19 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-class ReportePDFNumerosVendidos extends StatefulWidget {
-  final DateTime fechaInicio;
-  final DateTime fechaFin;
+class FacturaPDF extends StatefulWidget {
+  final String ID;
 
-  const ReportePDFNumerosVendidos({
+  const FacturaPDF({
     Key? key,
-    required this.fechaInicio,
-    required this.fechaFin,
+    required this.ID,
   }) : super(key: key);
 
   @override
-  _ReportePDFNumerosVendidosState createState() =>
-      _ReportePDFNumerosVendidosState();
+  _FacturaPDFState createState() => _FacturaPDFState();
 }
 
-class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
+class _FacturaPDFState extends State<FacturaPDF> {
   late Uint8List _pdfBytes;
   List<Map<String, dynamic>> _data = [];
   bool _isLoading = true;
@@ -40,13 +38,9 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
 
   Future<void> fetchDataAndGeneratePDF() async {
     try {
-      String formattedFechaInicio =
-          DateFormat('yyyy-dd-MM').format(widget.fechaInicio);
-      String formattedFechaFin =
-          DateFormat('yyyy-dd-MM').format(widget.fechaFin);
-
-      final response = await http.get(Uri.parse(
-          '${apiUrl}Reporte/NumerosVendidos?fecha_inicio=$formattedFechaInicio&fecha_fin=$formattedFechaFin'));
+      String ventaID = widget.ID;
+      final response = await http
+          .get(Uri.parse('${apiUrl}Ventas/GenerarFactura?ID=$ventaID'));
 
       if (response.statusCode == 200) {
         dynamic responseData = json.decode(response.body);
@@ -243,7 +237,18 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reporte de Ventas'),
+        title: const Text('Impresión Factura'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (context) => HomeScreen(),
+              ),
+            );
+          },
+        ),
         backgroundColor: ColorPalette.darkblueColorApp,
       ),
       body: _isLoading
@@ -255,7 +260,7 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
           : _pdfBytes.isNotEmpty
               ? PdfPreview(
                   canChangeOrientation: true,
-                  pdfFileName: 'Copia Facturas',
+                  pdfFileName: 'Copia de Factura',
                   build: (format) => _generatePdfPreview(format, _pdfBytes),
                 )
               : const Center(
@@ -272,9 +277,8 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
 void main() {
   runApp(
     MaterialApp(
-      home: ReportePDFNumerosVendidos(
-        fechaInicio: DateTime.now(),
-        fechaFin: DateTime.now(),
+      home: FacturaPDF(
+        ID: '',
       ),
     ),
   );

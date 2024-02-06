@@ -51,5 +51,20 @@ namespace Numerito.API.Services.Cierres
 
             return Result<string>.Success(OutputMessage.SuccessInsertCierre);
         }
+
+        public Result<string> EliminarCierre(int id)
+        {
+
+            var listaCierres = _context.Cierres.AsQueryable().ToList();
+            
+            var cierre = listaCierres.FirstOrDefault(x => x.CierreId == id);
+            if (cierre == null) return Result<string>.Fault(OutputMessage.FaultCierreNotExists);
+
+            _context.Cierres.Remove(cierre);
+            _context.SaveChanges();
+
+            return Result<string>.Success(OutputMessage.SuccessDeleteCierre);
+        }
+
     }
 }

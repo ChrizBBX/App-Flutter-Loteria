@@ -210,11 +210,7 @@ class _NumberConfigurationScreenState extends State<NumberConfigurationScreen> {
             borderRadius: 5,
           ).show(context);
         }
-      } else {
-        print('Error en la solicitud HTTP: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
 }

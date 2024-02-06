@@ -1,12 +1,15 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:app_loteria/models/Venta.dart';
+import 'package:app_loteria/screens/sale_screen/factura_screen.dart';
 import 'package:app_loteria/toastconfig/toastconfig.dart';
 import 'package:app_loteria/utils/colorPalette.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../api.dart';
-import '../widgets/num_pad.dart';
+import '../../api.dart';
+import '../../widgets/num_pad.dart';
 import 'package:http/http.dart' as http;
 
 class SaleScreen extends StatefulWidget {
@@ -191,7 +194,18 @@ class _SaleScreenState extends State<SaleScreen> {
         if (value == "C") {
           _precioController.text = "";
         } else if (value == "Intro") {
-          _addArreglo();
+          int valor = int.tryParse(_precioController.text) ?? 0;
+          if (valor % 5 == 0) {
+            _addArreglo();
+          } else {
+            CherryToast.warning(
+              title: const Text(
+                  'El valor a ingresar solo permite multiplos de 5',
+                  style: TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                  textAlign: TextAlign.start),
+              borderRadius: 5,
+            ).show(context);
+          }
         } else {
           _precioController.text += value;
         }
@@ -209,8 +223,6 @@ class _SaleScreenState extends State<SaleScreen> {
       });
       _numberController.text = "";
       _precioController.text = "";
-
-      print(detalles);
     } else {
       CherryToast.warning(
         title: const Text('Ambos campos deben ser llenados',
@@ -227,12 +239,12 @@ class _SaleScreenState extends State<SaleScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label),
-        SizedBox(height: 8.0),
+        const SizedBox(height: 8.0),
         DropdownButton<int>(
           value: value,
           onChanged: onChanged,
           items: [
-            DropdownMenuItem<int>(
+            const DropdownMenuItem<int>(
               value: 0,
               enabled: false,
               child: Text('Seleccione'),
@@ -268,7 +280,7 @@ class _SaleScreenState extends State<SaleScreen> {
             },
           ),
         ),
-        SizedBox(width: 16.0),
+        const SizedBox(width: 16.0),
         Expanded(
           child: TextField(
             controller: _precioController,
@@ -472,25 +484,49 @@ class _SaleScreenState extends State<SaleScreen> {
 
       final decodedJson = jsonDecode(response.body);
       final respuesta = decodedJson["message"];
+      List<String> partes = respuesta.split('-');
       if (respuesta.toString().contains("La venta")) {
-        CherryToast.success(title: respuesta);
+        CherryToast.success(
+          title: Text('$partes[0]',
+              style: const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+              textAlign: TextAlign.start),
+          borderRadius: 5,
+        ).show(context);
         selectedPerson = 0;
         selectedPaymentMethod = 0;
         _numberController.text = '';
         _precioController.text = '';
         _controlador.text = '';
         detalles = [];
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FacturaPDF(ID: partes[1]),
+          ),
+        );
       } else if (respuesta.toString().contains("El numero")) {
-        CherryToast.warning(title: respuesta);
-      } else if (respuesta.toString().contains("Limite")) {
-        CherryToast.warning(title: respuesta);
-      } else {
         CherryToast.warning(
-            title: const Text("Ha ocurrido un error Inesperado"));
+          title: Text('$respuesta',
+              style: const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+              textAlign: TextAlign.start),
+          borderRadius: 5,
+        ).show(context);
+      } else if (respuesta.toString().contains("Limite")) {
+        CherryToast.warning(
+          title: Text('$respuesta',
+              style: const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+              textAlign: TextAlign.start),
+          borderRadius: 5,
+        ).show(context);
+      } else {
+        CherryToast.error(
+          title: Text('Ha ocurrido un error Inesperado',
+              style: const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+              textAlign: TextAlign.start),
+          borderRadius: 5,
+        ).show(context);
       }
-    } catch (e) {
-      print('Error: $e');
-    }
+    } catch (e) {}
   }
 
   Future<void> fetchData() async {
@@ -511,12 +547,7 @@ class _SaleScreenState extends State<SaleScreen> {
           selectedPerson =
               fetchedPersonas.isNotEmpty ? fetchedPersonas.first.personaId : 0;
         });
-
-        print(personas);
-      } else {
-        print(
-            'Error en la solicitud HTTP para Persona/Listado: ${responsePersona.statusCode}');
-      }
+      } else {}
 
       if (responseMetodoPago.statusCode == 200) {
         final List<dynamic> dataMetodoPago =
@@ -530,14 +561,7 @@ class _SaleScreenState extends State<SaleScreen> {
               ? fetchedMetodosPago.first.metodoPagoId
               : 0;
         });
-
-        print(metodosPago.toString());
-      } else {
-        print(
-            'Error en la solicitud HTTP para MetodoPago/Listado: ${responseMetodoPago.statusCode}');
-      }
-    } catch (e) {
-      print('Error en fetchData: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
 }

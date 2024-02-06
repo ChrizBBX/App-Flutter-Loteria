@@ -101,22 +101,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     backgroundImage: NetworkImage(_userProfile.imagen),
                   ),
                 ),
-                Container(
-                  margin: const EdgeInsets.only(bottom: 8.0),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: ColorPalette.darkblueColorApp,
-                  ),
-                  child: IconButton(
-                    icon: const Icon(
-                      Icons.camera_alt,
-                      color: Colors.white,
-                    ),
-                    onPressed: () {
-                      opciones(context);
-                    },
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 16.0),
@@ -229,9 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Icons.camera_alt,
                     color: Colors.white,
                   ),
-                  onPressed: () {
-                    opciones(context);
-                  },
+                  onPressed: () {},
                 ),
               ),
             ],
@@ -457,9 +439,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               textAlign: TextAlign.justify),
           borderRadius: 5,
         ).show(context);
-      } else {
-        print('Error: $e');
-      }
+      } else {}
     } finally {}
   }
 
@@ -518,9 +498,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               textAlign: TextAlign.justify),
           borderRadius: 5,
         ).show(context);
-      } else {
-        print('Error: $e');
-      }
+      } else {}
     }
   }
 
@@ -563,75 +541,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       margin: const EdgeInsets.symmetric(vertical: 3.0),
       height: 1.0,
       color: const Color.fromARGB(180, 158, 158, 158),
-    );
-  }
-
-  void opciones(context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          contentPadding: const EdgeInsets.all(0),
-          content: SingleChildScrollView(
-            child: Column(
-              children: [
-                InkWell(
-                  onTap: () {
-                    selImagen(1, context);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          width: 1,
-                          color: Colors.grey.shade300,
-                        ),
-                      ),
-                    ),
-                    child: Row(
-                      children: const [
-                        Expanded(
-                          child: Text(
-                            'Toma una foto',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        Icon(
-                          Icons.camera_alt_outlined,
-                          color: ColorPalette.darkblueColorApp,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    selImagen(2, context);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                      children: const [
-                        Expanded(
-                          child: Text(
-                            'Elegir de Galeria',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                        Icon(
-                          Icons.photo,
-                          color: ColorPalette.darkblueColorApp,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
     );
   }
 

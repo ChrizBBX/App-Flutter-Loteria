@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 class Numero {
   final int numeroId;
   final String? numeroDescripcion;

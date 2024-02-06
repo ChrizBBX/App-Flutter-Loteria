@@ -1,7 +1,7 @@
 // home_screen.dart
 import 'package:app_loteria/screens/dashboard_screen.dart';
 import 'package:app_loteria/screens/number_configuration_screen.dart';
-import 'package:app_loteria/screens/sale_screen.dart';
+import 'package:app_loteria/screens/sale_screen/sale_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:app_loteria/widgets/appbar_roots.dart';
 import '../widgets/navbar_roots.dart';
@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         return NumberConfigurationScreen();
       default:
-        return SizedBox.shrink();
+        return CardListWidget();
     }
   } 
 

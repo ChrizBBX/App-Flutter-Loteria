@@ -10,14 +10,14 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
-class ReportePDFInventario extends StatefulWidget {
-  const ReportePDFInventario({Key? key}) : super(key: key);
+class ReportePDF_Cierre extends StatefulWidget {
+  const ReportePDF_Cierre({Key? key}) : super(key: key);
 
   @override
-  _ReportePDFInventarioState createState() => _ReportePDFInventarioState();
+  _ReportePDF_CierreState createState() => _ReportePDF_CierreState();
 }
 
-class _ReportePDFInventarioState extends State<ReportePDFInventario> {
+class _ReportePDF_CierreState extends State<ReportePDF_Cierre> {
   late Uint8List _pdfBytes;
   List<Map<String, dynamic>> _data = [];
   bool _isLoading = true;
@@ -30,7 +30,8 @@ class _ReportePDFInventarioState extends State<ReportePDFInventario> {
 
   Future<void> fetchDataAndGeneratePDF() async {
     try {
-      final response = await http.get(Uri.parse('${apiUrl}Reporte/Inventario'));
+      final response = await http.get(
+          Uri.parse('${apiUrl}Reporte/ReporteCierres?fecha=${DateTime.now()}'));
 
       if (response.statusCode == 200) {
         dynamic responseData = json.decode(response.body);
@@ -70,7 +71,8 @@ class _ReportePDFInventarioState extends State<ReportePDFInventario> {
                     style: pw.TextStyle(fontSize: 20, color: PdfColors.white),
                   ),
                   pw.Text(
-                    'Reporte de Inventario'.toUpperCase(),
+                    'Reporte de Cierre ${DateFormat('dd/MM/yyyy').format(DateTime.parse(DateTime.now().toString()))}'
+                        .toUpperCase(),
                     style: pw.TextStyle(fontSize: 14, color: PdfColors.white),
                   ),
                 ],
@@ -91,12 +93,18 @@ class _ReportePDFInventarioState extends State<ReportePDFInventario> {
             return [
               pw.SizedBox(height: 5.00),
               pw.Table.fromTextArray(
-                headers: ['Numero', 'Descripcion', 'Limite de Hoy'],
+                headers: ['N° Factura', 'Hora y Fecha', 'Total'],
                 data: dataList?.map((row) {
                       return [
-                        row['numeroId']?.toString() ?? '',
-                        row['numeroDescripcion']?.toString() ?? '',
-                        row['limite']?.toString() ?? '',
+                        row['ventaId']?.toString() ?? '',
+                        DateFormat('HH:mm dd/MM/yyyy').format(
+                            DateTime.parse(row['fechaCreacion'].toString())),
+                        row['cantidad'] != null
+                            ? NumberFormat.currency(
+                                locale: 'es_HN',
+                                symbol: 'LPS',
+                              ).format(row['cantidad'])
+                            : 'N/A',
                       ];
                     }).toList() ??
                     [],
@@ -112,14 +120,43 @@ class _ReportePDFInventarioState extends State<ReportePDFInventario> {
                 headerDecoration: pw.BoxDecoration(
                   color: PdfColors.cyan,
                 ),
-                rowDecoration: const pw.BoxDecoration(
-                    color: PdfColors.grey100), // Updated this line
+                rowDecoration: pw.BoxDecoration(
+                  color: PdfColors.grey100,
+                ),
                 cellAlignments: {
                   0: pw.Alignment.centerLeft,
                   1: pw.Alignment.centerRight,
                   2: pw.Alignment.centerRight,
                 },
                 context: context,
+              ),
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.end,
+                children: [
+                  pw.Text('Total: ',
+                      style: pw.TextStyle(
+                        fontWeight: pw.FontWeight.bold,
+                        fontSize: 8,
+                      )),
+                  pw.Text(
+                    NumberFormat.currency(
+                      locale: 'es_HN',
+                      symbol: 'LPS',
+                    ).format(dataList?.fold<double>(
+                          0.0,
+                          (prev, data) =>
+                              prev +
+                              (data['cantidad'] != null
+                                  ? data['cantidad']
+                                  : 0.0),
+                        ) ??
+                        0.0),
+                    style: pw.TextStyle(
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 8,
+                    ),
+                  ),
+                ],
               ),
             ];
           },
@@ -156,7 +193,7 @@ class _ReportePDFInventarioState extends State<ReportePDFInventario> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reporte Inventario'),
+        title: const Text('Reporte Cierre de Dia'),
         backgroundColor: ColorPalette.darkblueColorApp,
       ),
       body: _isLoading
@@ -179,5 +216,5 @@ class _ReportePDFInventarioState extends State<ReportePDFInventario> {
 }
 
 void main() {
-  runApp(const MaterialApp(home: ReportePDFInventario()));
+  runApp(const MaterialApp(home: ReportePDF_Cierre()));
 }

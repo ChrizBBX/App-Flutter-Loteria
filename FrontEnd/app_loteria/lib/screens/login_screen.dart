@@ -32,7 +32,6 @@ Future<void> fetchData(
       final decodedJson = jsonDecode(response.body);
       final data = decodedJson["data"];
       final message = decodedJson["message"];
-      print(message);
       if (message == 'El usuario o contraseña es incorrecto') {
         CherryToast.warning(
           title: const Text('Usuario o Contraseña Incorrecto',
@@ -75,9 +74,7 @@ Future<void> fetchData(
             textAlign: TextAlign.justify),
         borderRadius: 5,
       ).show(context);
-    } else {
-      print('Error: $e');
-    }
+    } else {}
   } finally {}
 }
 
@@ -202,29 +199,7 @@ class _loginScreenState extends State<loginScreen> {
                               style: const TextStyle(color: Colors.white),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15, right: 15, bottom: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                TextButton(
-                                  onPressed: () {
-                                    
-                                  },
-                                  child: const Text(
-                                    "¿Contraseña olvidada?",
-                                    style: TextStyle(
-                                      fontSize: 18,
-                                      fontFamily: 'RobotoMono',
-                                      fontWeight: FontWeight.normal,
-                                      color: ColorPalette.whiteColor,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+                          SizedBox(height: 18.00),
                           Padding(
                             padding: const EdgeInsets.all(15),
                             child: InkWell(
@@ -273,7 +248,7 @@ class _loginScreenState extends State<loginScreen> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 50),
+                          const SizedBox(height: 20),
                         ],
                       ),
                     ),

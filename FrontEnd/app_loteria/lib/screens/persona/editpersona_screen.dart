@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:app_loteria/models/Persona.dart';
 import 'package:app_loteria/models/Usuario.dart';
+import 'package:app_loteria/toastconfig/toastconfig.dart';
 import 'package:app_loteria/utils/colorPalette.dart';
 import 'package:app_loteria/widgets/appbar_roots.dart';
 import 'package:flutter/material.dart';
@@ -214,13 +215,50 @@ class _EditPersonFormState extends State<EditPersonForm> {
       );
 
       if (response.statusCode == 200) {
-        print('Persona agregada exitosamente');
-      } else {
-        // Error al agregar la persona
-        print('Error al agregar la persona: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+        final decodedJson = jsonDecode(response.body);
+        final respuesta = decodedJson["message"];
+        if (respuesta
+            .toString()
+            .contains("La Persona se ha editado exitosamente")) {
+          CherryToast.success(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else if (respuesta
+            .toString()
+            .contains("Hay campos vacios o la entidad es invalida")) {
+          CherryToast.warning(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else if (respuesta
+            .toString()
+            .contains("Ya existe una persona con este número de identidad")) {
+          CherryToast.warning(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else if (respuesta
+            .toString()
+            .contains("La persona seleccionada no existe")) {
+          CherryToast.warning(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        }
+      } else {}
+    } catch (e) {}
   }
 }

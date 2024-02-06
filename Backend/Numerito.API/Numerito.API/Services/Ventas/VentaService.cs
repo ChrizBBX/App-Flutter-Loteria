@@ -6,6 +6,7 @@ using Numerito.API.Data.Entities;
 using Numerito.API.Services.Ventas.VentasDto;
 using Numerito.API.Utility;
 using static Numerito.API.Data.Entities.Venta;
+using static Numerito.API.Services.Reportes.ReportesService;
 
 namespace Numerito.API.Services.Ventas
 {
@@ -61,6 +62,8 @@ namespace Numerito.API.Services.Ventas
                 _context.Ventas.Add(venta);
                 _context.SaveChanges();
 
+                int nuevoID = venta.VentaId;
+
                 foreach ( var item in entidad.VentaDetalles)
                 {
                     var validacionesDetalle = _ventaRules.ValidarNumero(listaNumeros, item.NumeroId, item.Valor);
@@ -97,13 +100,54 @@ namespace Numerito.API.Services.Ventas
 
                 _context.SaveChanges();
                 _context.Database.CommitTransaction();
-                return Result<string>.Success(OutputMessage.SuccessInsertVenta);
+                return Result<string>.Success($"{OutputMessage.SuccessInsertVenta} - {nuevoID}");
+
             }
             catch (Exception ex)
             {
                 _context.Database.RollbackTransaction();
                 return Result<string>.Fault(OutputMessage.Error);
             }
+        }
+        
+        public Result<List<VentaCompleta>> GenerarFactura(int? ID)
+        {
+            var result = (from ventaDetalle in _context.VentaDetalles
+                          join venta in _context.Ventas on ventaDetalle.VentaId equals venta.VentaId
+                          join persona in _context.Personas on venta.PersonaId equals persona.PersonaId
+                          join metodopago in _context.MetodosPagos on venta.MetodoPagoId equals metodopago.MetodoPagoId
+                          join numero in _context.Numeros on ventaDetalle.NumeroId equals numero.NumeroId
+                          where venta.VentaId == ID
+                          select new
+                          {
+                              VentaId = venta.VentaId,
+                              fechaCreacion = venta.FechaCreacion,
+                              Nombres = persona.Nombres,
+                              Apellidos = persona.Apellidos,
+                              Identidad = persona.Identidad,
+                              MetodoPagoDescripcion = metodopago.Descripcion,
+                              Detalle = new DetalleVenta
+                              {
+                                  VentaDetalleId = ventaDetalle.VentaDetalleId,
+                                  NumeroId = ventaDetalle.NumeroId,
+                                  NumeroDescripcion = numero.NumeroDescripcion,
+                                  Valor = ventaDetalle.Valor,
+                              }
+                          })
+                          .GroupBy(x => x.VentaId)
+                          .Select(group => new VentaCompleta
+                          {
+                              VentaId = group.Key,
+                              fechaCreacion = group.First().fechaCreacion,
+                              Nombres = group.First().Nombres,
+                              Apellidos = group.First().Apellidos,
+                              Identidad = group.First().Identidad,
+                              MetodoPagoDescripcion = group.First().MetodoPagoDescripcion,
+                              Detalles = group.Select(x => x.Detalle).ToList()
+                          })
+                          .ToList();
+
+            return Result<List<VentaCompleta>>.Success(result);
         }
     }
 }

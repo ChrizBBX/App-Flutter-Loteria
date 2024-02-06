@@ -40,5 +40,12 @@ namespace Numerito.API.Controllers
                 var result = _PersonaService.EditarPersona(entidad);
                 return Ok(result);
             }
+
+            [HttpPut("DesactivarPersona")]
+            public IActionResult DesactivarPersona(int PersonaId)
+            {
+                var result = _PersonaService.DesactivarPersona(PersonaId);
+                return Ok(result);
+            }
     }
 }

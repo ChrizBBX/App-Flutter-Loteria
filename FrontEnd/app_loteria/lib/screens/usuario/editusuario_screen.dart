@@ -1,9 +1,12 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
 
 import 'package:app_loteria/models/Persona.dart';
 import 'package:app_loteria/models/Sucursal.dart';
 import 'package:app_loteria/models/Usuario.dart';
 import 'package:app_loteria/screens/usuario/listusuario_screen.dart';
+import 'package:app_loteria/toastconfig/toastconfig.dart';
 import 'package:app_loteria/utils/colorPalette.dart';
 import 'package:app_loteria/widgets/appbar_roots.dart';
 import 'package:flutter/material.dart';
@@ -74,7 +77,6 @@ class _EditUserFormState extends State<EditUserForm> {
 
         setState(() {
           personas = data.map((item) {
-            // Convertir las fechas de String a DateTime
             item['fechaCreacion'] = parseDateTime(item['fechaCreacion']);
             item['fechaModificacion'] =
                 parseDateTime(item['fechaModificacion']);
@@ -82,12 +84,8 @@ class _EditUserFormState extends State<EditUserForm> {
             return Persona.fromJson(item);
           }).toList();
         });
-      } else {
-        print('Error en la solicitud HTTP: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
 
   void _fetchSucursalList() async {
@@ -102,12 +100,8 @@ class _EditUserFormState extends State<EditUserForm> {
             return Sucursal.fromJson(item);
           }).toList();
         });
-      } else {
-        print('Error en la solicitud HTTP: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
 
   void _loadUserData() async {
@@ -143,6 +137,20 @@ class _EditUserFormState extends State<EditUserForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                Container(
+                  width: double.infinity,
+                  child: Center(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 20.0),
+                      width: 170.0,
+                      height: 170.0,
+                      child: Image.asset(
+                        'images/EditarUsuario.png',
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 16.0),
                 TextFormField(
                   controller: _nombreUsuarioController,
@@ -161,11 +169,9 @@ class _EditUserFormState extends State<EditUserForm> {
                   decoration: const InputDecoration(labelText: 'Contraseña'),
                   obscureText: true,
                   validator: (value) {
-                    // Puedes agregar validaciones adicionales si es necesario
                     return null;
                   },
                 ),
-
                 DropdownButtonFormField<int>(
                   value: _selectedPersona,
                   items: [
@@ -193,7 +199,6 @@ class _EditUserFormState extends State<EditUserForm> {
                     return null;
                   },
                 ),
-
                 DropdownButtonFormField<int>(
                   value: _selectedSucursal,
                   items: [
@@ -289,7 +294,7 @@ class _EditUserFormState extends State<EditUserForm> {
       sucursalId: _selectedSucursal ?? 0,
       usuarioCreacion: prefs.getInt('usuarioId') ?? 0,
       fechaCreacion: DateTime.now(),
-      usuarioModificacion:  prefs.getInt('usuarioId') ?? 0,
+      usuarioModificacion: prefs.getInt('usuarioId') ?? 0,
       admin: _isAdmin,
       fechaModificacion: DateTime.now(),
     );
@@ -306,19 +311,40 @@ class _EditUserFormState extends State<EditUserForm> {
       );
 
       if (response.statusCode == 200) {
-        print('Usuario editado exitosamente');
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ListUsuarioScreen(),
-          ),
-        );
-      } else {
-        // Error al editar el usuario
-        print('Error al editar el usuario: ${response.statusCode}');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
+        final decodedJson = jsonDecode(response.body);
+        final respuesta = decodedJson["message"];
+        if (respuesta
+            .toString()
+            .contains("El usuario se ha editado exitosamente")) {
+          CherryToast.success(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else if (respuesta
+            .toString()
+            .contains("Hay campos vacios o la entidad es invalida")) {
+          CherryToast.warning(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else if (respuesta
+            .toString()
+            .contains("El Usuario seleccionado no existe")) {
+          CherryToast.warning(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        }
+      } else {}
+    } catch (e) {}
   }
 }

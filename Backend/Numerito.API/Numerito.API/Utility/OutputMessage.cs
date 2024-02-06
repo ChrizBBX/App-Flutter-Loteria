@@ -18,7 +18,7 @@
         public const string FaultPersonaIdentidadExists = "Ya existe una persona con este número de identidad";
         public const string SuccessUpdatePersona = "La persona se ha editado exitosamente";
         public const string FaultEntityPersona = "Hay campos vacios o la entidad es invalida";
-
+        public const string SuccessDisablePersona = "La Persona se ha desactivado exitosamente";
         #endregion
         #region Ventas
         public const string SuccessInsertVenta = "La venta de ha realizado exitosamente";
@@ -36,6 +36,8 @@
         #endregion
         #region Cierres
         public const string SuccessInsertCierre = "El cierre se ha realizado exitosamente";
+        public const string SuccessDeleteCierre = "Se ha eliminado el cierre exitosamente";
+        public const string FaultCierreNotExists = "El cierre seleccionado no existe";
         public const string FaultLimitCierre = "Ya se han realizado todos los cierres de hoy";
         #endregion
     }

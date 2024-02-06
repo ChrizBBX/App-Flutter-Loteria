@@ -68,14 +68,8 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
           }).toList();
           filteredPersonas = List.from(personas);
         });
-      } else {
-        // Manejar el error de la solicitud HTTP
-        print('Error en la solicitud HTTP: ${response.statusCode}');
-      }
-    } catch (e) {
-      // Manejar errores de red u otros
-      print('Error: $e');
-    }
+      } else {}
+    } catch (e) {}
   }
 
   @override
@@ -242,24 +236,50 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
           await http.delete(Uri.parse('${apiUrl}Persona/Eliminar/$personaId'));
 
       if (response.statusCode == 200) {
-        // Actualizar la lista después de eliminar la persona
-        _fetchPersonList();
-        CherryToast.success(title: const Text('Persona eliminada exitosamente'))
-            .show(context);
-      } else {
-        // Manejar el error de la solicitud HTTP
-        print(
-            'Error en la solicitud HTTP para eliminar persona: ${response.statusCode}');
-        CherryToast.warning(
-                title: const Text('Error al intentar eliminar la persona'))
-            .show(context);
-      }
-    } catch (e) {
-      // Manejar errores de red u otros
-      print('Error: $e');
-      CherryToast.warning(
-              title: const Text('Error al intentar eliminar la persona'))
-          .show(context);
-    }
+        final decodedJson = jsonDecode(response.body);
+        final respuesta = decodedJson["message"];
+        if (respuesta
+            .toString()
+            .contains("La Persona se ha desactivado exitosamente")) {
+          CherryToast.success(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else if (respuesta
+            .toString()
+            .contains("Hay campos vacios o la entidad es invalida")) {
+          CherryToast.warning(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else if (respuesta
+            .toString()
+            .contains("Ya existe una persona con este número de identidad")) {
+          CherryToast.warning(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        } else if (respuesta
+            .toString()
+            .contains("La persona seleccionada no existe")) {
+          CherryToast.warning(
+            title: Text('$respuesta',
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
+                textAlign: TextAlign.start),
+            borderRadius: 5,
+          ).show(context);
+        }
+      } else {}
+    } catch (e) {}
   }
 }

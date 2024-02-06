@@ -56,9 +56,7 @@ class _ReportePDFTopNumerosState extends State<ReportePDFTopNumeros> {
           _data = [Map<String, dynamic>.from(responseData)];
         }
       }
-    } catch (e) {
-      print('Error al obtener datos: $e');
-    }
+    } catch (e) {}
 
     setState(() {
       _isLoading = false;
@@ -67,101 +65,102 @@ class _ReportePDFTopNumerosState extends State<ReportePDFTopNumeros> {
     await generatePDF();
   }
 
- Future<Uint8List> generatePDF() async {
-  final pw.Document pdf = pw.Document();
-  if (_data.isNotEmpty) {
-    final List<dynamic>? dataList = _data[0]['data'] as List<dynamic>?;
+  Future<Uint8List> generatePDF() async {
+    final pw.Document pdf = pw.Document();
+    if (_data.isNotEmpty) {
+      final List<dynamic>? dataList = _data[0]['data'] as List<dynamic>?;
 
-    pdf.addPage(
-      pw.MultiPage(
-        header: (pw.Context context) {
-          return pw.Container(
-            color: PdfColor.fromHex("001F3F"),
-            width: double.infinity,
-            child: pw.Column(
-              mainAxisAlignment: pw.MainAxisAlignment.center,
-              children: [
-                pw.Text(
-                  'NUMERITO'.toUpperCase(),
-                  style: const pw.TextStyle(
-                      fontSize: 16, color: PdfColors.white),
-                ),
-                pw.Text(
-                  'Reporte números más vendidos'.toUpperCase(),
-                  style: const pw.TextStyle(
-                      fontSize: 12, color: PdfColors.white),
-                ),
-              ],
-            ),
-          );
-        },
-        footer: (pw.Context context) {
-          return pw.Container(
-            alignment: pw.Alignment.centerRight,
-            margin: const pw.EdgeInsets.only(top: 10.0),
-            child: pw.Text(
-              'Fecha y Hora: ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
-              style: const pw.TextStyle(fontSize: 8),
-            ),
-          );
-        },
-        build: (pw.Context context) {
-          return [
-            pw.SizedBox(height: 5.00),
-            pw.Table.fromTextArray(
-              headers: ['ID', 'Descripción', 'Cantidad'],
-              data: dataList?.map((row) {
-                return [
-                  row['idNumero']?.toString() ?? '',
-                  row['descripcionNumero']?.toString() ?? '',
-                  row['cantidad']?.toString() ?? '',
-                ];
-              }).toList() ?? [], // Asegúrate de manejar el caso en que dataList sea nulo
-              border: const pw.TableBorder(
-                horizontalInside: pw.BorderSide.none,
-                verticalInside: pw.BorderSide.none,
-                bottom: pw.BorderSide.none,
-                top: pw.BorderSide.none,
-                left: pw.BorderSide.none,
-                right: pw.BorderSide.none,
+      pdf.addPage(
+        pw.MultiPage(
+          header: (pw.Context context) {
+            return pw.Container(
+              color: PdfColor.fromHex("001F3F"),
+              width: double.infinity,
+              child: pw.Column(
+                mainAxisAlignment: pw.MainAxisAlignment.center,
+                children: [
+                  pw.Text(
+                    'NUMERITO'.toUpperCase(),
+                    style: const pw.TextStyle(
+                        fontSize: 16, color: PdfColors.white),
+                  ),
+                  pw.Text(
+                    'Reporte números más vendidos'.toUpperCase(),
+                    style: const pw.TextStyle(
+                        fontSize: 12, color: PdfColors.white),
+                  ),
+                ],
               ),
-              headerStyle:
-                  pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
-              headerDecoration: const pw.BoxDecoration(
-                color: PdfColors.cyan,
+            );
+          },
+          footer: (pw.Context context) {
+            return pw.Container(
+              alignment: pw.Alignment.centerRight,
+              margin: const pw.EdgeInsets.only(top: 10.0),
+              child: pw.Text(
+                'Fecha y Hora: ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
+                style: const pw.TextStyle(fontSize: 8),
               ),
-              rowDecoration: const pw.BoxDecoration(color: PdfColors.grey100),
-              cellAlignments: {
-                0: pw.Alignment.centerLeft,
-                1: pw.Alignment.centerRight,
-                2: pw.Alignment.centerRight,
-              },
-              context: context,
-            ),
-            pw.Container(
-              margin: const pw.EdgeInsets.symmetric(vertical: 5),
-              child: pw.Divider(color: PdfColors.grey),
-            ),
-          ];
-        },
-      ),
-    );
+            );
+          },
+          build: (pw.Context context) {
+            return [
+              pw.SizedBox(height: 5.00),
+              pw.Table.fromTextArray(
+                headers: ['Número', 'Descripción', 'Cantidad'],
+                data: dataList?.map((row) {
+                      return [
+                        row['idNumero']?.toString() ?? '',
+                        row['descripcionNumero']?.toString() ?? '',
+                        row['cantidad']?.toString() ?? '',
+                      ];
+                    }).toList() ??
+                    [],
+                border: const pw.TableBorder(
+                  horizontalInside: pw.BorderSide.none,
+                  verticalInside: pw.BorderSide.none,
+                  bottom: pw.BorderSide.none,
+                  top: pw.BorderSide.none,
+                  left: pw.BorderSide.none,
+                  right: pw.BorderSide.none,
+                ),
+                headerStyle:
+                    pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 8),
+                headerDecoration: const pw.BoxDecoration(
+                  color: PdfColors.cyan,
+                ),
+                rowDecoration: const pw.BoxDecoration(color: PdfColors.grey100),
+                cellAlignments: {
+                  0: pw.Alignment.centerLeft,
+                  1: pw.Alignment.centerRight,
+                  2: pw.Alignment.centerRight,
+                },
+                context: context,
+              ),
+              pw.Container(
+                margin: const pw.EdgeInsets.symmetric(vertical: 5),
+                child: pw.Divider(color: PdfColors.grey),
+              ),
+            ];
+          },
+        ),
+      );
+    }
+
+    final Uint8List pdfBytes = Uint8List.fromList(await pdf.save());
+
+    setState(() {
+      _pdfBytes = pdfBytes;
+    });
+
+    return pdfBytes;
   }
-
-  final Uint8List pdfBytes = Uint8List.fromList(await pdf.save());
-
-  setState(() {
-    _pdfBytes = pdfBytes;
-  });
-
-  return pdfBytes;
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reporte de Ventas'),
+        title: const Text('Números más Vendidos'),
         backgroundColor: ColorPalette.darkblueColorApp,
       ),
       body: _isLoading

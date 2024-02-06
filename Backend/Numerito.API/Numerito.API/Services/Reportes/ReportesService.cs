@@ -99,7 +99,7 @@ namespace Numerito.API.Services.Reportes
                           join metodopago in _context.MetodosPagos on venta.MetodoPagoId equals metodopago.MetodoPagoId
                           join numero in _context.Numeros on ventaDetalle.NumeroId equals numero.NumeroId
                           where venta.FechaCreacion >= fecha_inicio && venta.FechaCreacion <= fecha_fin
-                          select new VentaCompleta
+                          select new
                           {
                               VentaId = venta.VentaId,
                               fechaCreacion = venta.FechaCreacion,
@@ -107,16 +107,42 @@ namespace Numerito.API.Services.Reportes
                               Apellidos = persona.Apellidos,
                               Identidad = persona.Identidad,
                               MetodoPagoDescripcion = metodopago.Descripcion,
-                              Detalles = new List<DetalleVenta>
-                           {
-                               new DetalleVenta
-                               {
-                                   VentaDetalleId = ventaDetalle.VentaDetalleId,
-                                   NumeroId = ventaDetalle.NumeroId,
-                                   NumeroDescripcion = numero.NumeroDescripcion,
-                                   Valor = ventaDetalle.Valor,
-                               }
-                           }
+                              Detalle = new DetalleVenta
+                              {
+                                  VentaDetalleId = ventaDetalle.VentaDetalleId,
+                                  NumeroId = ventaDetalle.NumeroId,
+                                  NumeroDescripcion = numero.NumeroDescripcion,
+                                  Valor = ventaDetalle.Valor,
+                              }
+                          })
+                          .GroupBy(x => x.VentaId)
+                          .Select(group => new VentaCompleta
+                          {
+                              VentaId = group.Key,
+                              fechaCreacion = group.First().fechaCreacion,
+                              Nombres = group.First().Nombres,
+                              Apellidos = group.First().Apellidos,
+                              Identidad = group.First().Identidad,
+                              MetodoPagoDescripcion = group.First().MetodoPagoDescripcion,
+                              Detalles = group.Select(x => x.Detalle).ToList()
+                          })
+                          .ToList();
+
+            return Result<List<VentaCompleta>>.Success(result);
+        }
+
+
+        public Result<List<VentaCompleta>> ReporteCierres(DateTime fecha)
+        {
+            var result = (from ventaDetalle in _context.VentaDetalles
+                          join venta in _context.Ventas on ventaDetalle.VentaId equals venta.VentaId
+                          where venta.FechaCreacion.Date == fecha.Date
+                          group new { ventaDetalle, venta } by venta.VentaId into grouped
+                          select new VentaCompleta
+                          {
+                              VentaId = grouped.Key,
+                              fechaCreacion = grouped.First().venta.FechaCreacion,
+                              Cantidad = grouped.Sum(x => (int)x.ventaDetalle.Valor)
                           }).ToList();
 
 
@@ -125,7 +151,6 @@ namespace Numerito.API.Services.Reportes
 
             return Result<List<VentaCompleta>>.Success(result);
         }
-
 
     }
 }

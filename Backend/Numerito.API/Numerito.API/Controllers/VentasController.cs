@@ -23,5 +23,12 @@ namespace Numerito.API.Controllers
             var result = _ventaService.AgregarVenta(entidad);
             return Ok(result);
         }
+
+        [HttpGet("GenerarFactura")]
+        public IActionResult GenerarFactura(int? ID)
+        {
+            var result = _ventaService.GenerarFactura(ID);
+            return Ok(result);
+        }
     }
 }

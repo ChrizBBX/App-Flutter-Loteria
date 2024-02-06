@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:app_loteria/screens/cierre/cierrelist_screen.dart';
 import 'package:app_loteria/screens/persona/createperonsa_screen.dart';
 import 'package:app_loteria/screens/persona/listpersona_screen.dart';
+import 'package:app_loteria/screens/reportes/reporteCierre_screen.dart';
 import 'package:app_loteria/screens/reportes/reporteInventario_screen.dart';
 import 'package:app_loteria/screens/reportes/reporteNumerosMasVendidos_screen.dart';
 import 'package:app_loteria/screens/reportes/reporteNumerosVendidos_screen.dart';
@@ -18,7 +20,7 @@ class CardListWidget extends StatefulWidget {
 }
 
 class _CardListWidgetState extends State<CardListWidget> {
-  late String nombreUsuario;
+  String nombreUsuario = '';
 
   @override
   void initState() {
@@ -35,10 +37,7 @@ class _CardListWidgetState extends State<CardListWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      alignment: WrapAlignment.center,
-      spacing: 16.0,
-      runSpacing: 16.0,
+    return Column(
       children: [
         Container(
           margin: const EdgeInsets.all(8.0),
@@ -85,54 +84,63 @@ class _CardListWidgetState extends State<CardListWidget> {
             ],
           ),
         ),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ListPersonaScreen()),
-            );
-          },
-          child: CardWidget(
-            title: 'Personas',
-            color: Colors.blue.shade400,
-            icon: Icons.person,
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ListUsuarioScreen()),
-            );
-          },
-          child: CardWidget(
-            title: 'Usuarios',
-            color: Colors.red.shade400,
-            icon: Icons.supervised_user_circle_outlined,
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            opciones(context);
-          },
-          child: CardWidget(
-            title: 'Reportes',
-            color: Colors.purple.shade600,
-            icon: Icons.picture_as_pdf_outlined,
-          ),
-        ),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const ReportePDFInventario()),
-            );
-          },
-          child: CardWidget(
-            title: 'Tarjeta 4',
-            color: Colors.lightGreen.shade600,
-            icon: Icons.query_stats_outlined,
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  opciones(context);
+                },
+                child: CardWidget(
+                  title: 'Reportes',
+                  backgroundImage: 'images/FondoReportes.jpg',
+                  icon: Icons.picture_as_pdf_outlined,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ListCierreScreen()),
+                  );
+                },
+                child: CardWidget(
+                  title: 'Cierre',
+                  backgroundImage: 'images/FondoCierres.jpg',
+                  icon: Icons.monetization_on_outlined,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ListPersonaScreen()),
+                  );
+                },
+                child: CardWidget(
+                  backgroundImage: 'images/FondoPersonas.jpg',
+                  title: 'Personas',
+                  icon: Icons.person,
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => ListUsuarioScreen()),
+                  );
+                },
+                child: CardWidget(
+                  title: 'Usuarios',
+                  backgroundImage: 'images/FondoUsuarios.jpg',
+                  icon: Icons.supervised_user_circle_outlined,
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -177,7 +185,7 @@ opciones(context) {
                     children: const [
                       Expanded(
                         child: Text(
-                          'Reporte de Inventario',
+                          'Inventario',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
@@ -207,7 +215,7 @@ opciones(context) {
                     children: const [
                       Expanded(
                         child: Text(
-                          'Reporte de Facturas',
+                          'Facturas',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
@@ -237,7 +245,41 @@ opciones(context) {
                     children: const [
                       Expanded(
                         child: Text(
-                          'Reporte de Numeros Más Vendidos',
+                          'Numeros Más Vendidos',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Icon(
+                        Icons.document_scanner,
+                        color: ColorPalette.darkblueColorApp,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const ReportePDF_Cierre()),
+                  );
+                },
+                child: Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        width: 1,
+                        color: Colors.grey.shade300,
+                      ),
+                    ),
+                  ),
+                  child: Row(
+                    children: const [
+                      Expanded(
+                        child: Text(
+                          'Cierre del Dia',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
@@ -298,7 +340,7 @@ _generarReporte(context, DateTime fechaInicio, DateTime fechaFin, opcion) {
         );
         break;
 
-              case 3:
+      case 3:
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -316,12 +358,12 @@ _generarReporte(context, DateTime fechaInicio, DateTime fechaFin, opcion) {
 
 class CardWidget extends StatelessWidget {
   final String title;
-  final Color color;
+  final String backgroundImage; // Agregado el parámetro para la imagen de fondo
   final IconData icon;
 
   const CardWidget({
     required this.title,
-    required this.color,
+    required this.backgroundImage,
     required this.icon,
   });
 
@@ -329,29 +371,42 @@ class CardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       margin: const EdgeInsets.all(8.0),
-      height: 140,
-      width: 140,
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
-      alignment: Alignment.center,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+      height: 335,
+      width: 325,
+      child: Stack(
         children: [
-          Icon(
-            icon,
-            color: Colors.white,
-            size: 40.0,
+          Image.asset(
+            backgroundImage,
+            height: double.infinity,
+            width: double.infinity,
+            fit: BoxFit.cover,
           ),
-          const SizedBox(height: 10.0),
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 18.0,
-              fontWeight: FontWeight.normal,
-              fontFamily: 'RobotoMono',
+          Container(
+            height: 335,
+            width: 325,
+            decoration: BoxDecoration(
+              color: Colors.black.withOpacity(0.5),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  icon,
+                  color: Colors.white,
+                  size: 60.0,
+                ),
+                const SizedBox(height: 20.0),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.normal,
+                    fontFamily: 'RobotoMono',
+                  ),
+                ),
+              ],
             ),
           ),
         ],
