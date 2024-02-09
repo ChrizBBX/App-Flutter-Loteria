@@ -68,7 +68,8 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
 
   Future<Uint8List> generatePDF() async {
     final PdfPageFormat pageFormat = const PdfPageFormat(
-        8.0 * PdfPageFormat.cm, 15.0 * PdfPageFormat.cm,
+        8.0 * PdfPageFormat.cm, 
+        15.0 * PdfPageFormat.cm,
         marginAll: 1.0 * PdfPageFormat.mm);
     final pw.Document pdf = pw.Document();
 
@@ -109,7 +110,7 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
                     alignment: pw.Alignment.centerRight,
                     margin: const pw.EdgeInsets.only(top: 10.0),
                     child: pw.Text(
-                      'Fecha y Hora: ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
+                      'Fecha y Hora Impresión: ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now())}',
                       style: const pw.TextStyle(fontSize: 8),
                     ),
                   );
@@ -120,7 +121,7 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
                     pw.Row(
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
-                        pw.Text('Factura #${row['ventaId']?.toString()}'),
+                        pw.Text('#${row['ventaId']?.toString()}'),
                         pw.Text(
                           'Fecha ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.parse(row['fechaCreacion']))}',
                           style: const pw.TextStyle(fontSize: 8),
@@ -142,7 +143,7 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
                         pw.Text(
-                          'Identidad ${row['identidad']?.toString() ?? 'N/A'}',
+                          'Identidad: ${row['identidad']?.toString() ?? 'N/A'}',
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ],
@@ -152,14 +153,14 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
                       mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                       children: [
                         pw.Text(
-                          'Identidad ${row['metodoPagoDescripcion']?.toString() ?? 'N/A'}',
+                          'Método de Pago: ${row['metodoPagoDescripcion']?.toString() ?? 'N/A'}',
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ],
                     ),
                     pw.SizedBox(height: 5.00),
                     pw.Table.fromTextArray(
-                      headers: ['ID', 'Número', 'Descripción', 'Valor Apuesta'],
+                      headers: ['ID', 'Número', 'Descripción', 'Valor'],
                       data: detalles.map((detalle) {
                         return [
                           detalle['ventaDetalleId']?.toString() ?? 'N/A',

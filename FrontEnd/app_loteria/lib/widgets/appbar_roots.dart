@@ -119,8 +119,8 @@ class AppBarWithoutBackButton extends StatelessWidget
     return AppBar(
       title: Image.asset(
         imageUrl,
-        height: 170,
-        width: 210,
+        height: 40,
+        width: 150,
         fit: BoxFit.fitHeight,
       ),
       centerTitle: true,
