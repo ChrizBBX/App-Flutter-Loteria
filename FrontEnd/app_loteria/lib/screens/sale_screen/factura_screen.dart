@@ -12,6 +12,7 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FacturaPDF extends StatefulWidget {
   final String ID;
@@ -38,7 +39,9 @@ class _FacturaPDFState extends State<FacturaPDF> {
 
   Future<void> fetchDataAndGeneratePDF() async {
     try {
+
       String ventaID = widget.ID;
+      
       final response = await http
           .get(Uri.parse('${apiUrl}Ventas/GenerarFactura?ID=$ventaID'));
 
@@ -61,11 +64,17 @@ class _FacturaPDFState extends State<FacturaPDF> {
   }
 
   Future<Uint8List> generatePDF() async {
+        final img = await rootBundle.load('images/LogoBlanco.png');
+    final imageBytes = img.buffer.asUint8List();
+    pw.Image image1 = pw.Image(pw.MemoryImage(imageBytes));
+
  final PdfPageFormat pageFormat = const PdfPageFormat(
         8.0 * PdfPageFormat.cm, 
         15.0 * PdfPageFormat.cm,
         marginAll: 1.0 * PdfPageFormat.mm);
     final pw.Document pdf = pw.Document();
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String usuario = prefs.getString('nombreUsuario') ?? '';
 
     for (var saleData in _data) {
       if (saleData['data'] is List) {
@@ -85,10 +94,10 @@ class _FacturaPDFState extends State<FacturaPDF> {
                     child: pw.Column(
                       mainAxisAlignment: pw.MainAxisAlignment.center,
                       children: [
-                        pw.Text(
-                          'NUMERITO'.toUpperCase(),
-                          style: const pw.TextStyle(
-                              fontSize: 16, color: PdfColors.white),
+                         pw.Container(
+                          alignment: pw.Alignment.center,
+                          height: 20,
+                          child: image1,
                         ),
                         pw.Text(
                           'Recibo de Venta'.toUpperCase(),
@@ -118,6 +127,16 @@ class _FacturaPDFState extends State<FacturaPDF> {
                         pw.Text('#${row['ventaId']?.toString()}'),
                         pw.Text(
                           'Fecha ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.parse(row['fechaCreacion']))}',
+                          style: const pw.TextStyle(fontSize: 8),
+                        ),
+                      ],
+                    ),
+                    pw.SizedBox(height: 5.00),
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                      children: [
+                        pw.Text(
+                          'Usuario: ${usuario}',
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ],
@@ -265,7 +284,7 @@ class _FacturaPDFState extends State<FacturaPDF> {
                   build: (format) => _generatePdfPreview(format, _pdfBytes),
                 )
               : const Center(
-                  child: Text('No se pudo generar el PDF'),
+                  child: Text('Cargando...'),
                 ),
     );
   }

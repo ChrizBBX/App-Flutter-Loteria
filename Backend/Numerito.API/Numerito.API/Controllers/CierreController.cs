@@ -16,6 +16,27 @@ namespace Numerito.API.Controllers
             _service = service;
         }
 
+        [HttpGet("Listado")]
+        public IActionResult Listado(int id)
+        {
+            var result = _service.Listado(id);
+            return Ok(result);
+        }
+
+        [HttpGet("CantidadNumCierre")]
+        public IActionResult CantidadNumCierre(DateTime fecha, int idusuario, int id)
+        {
+            var result = _service.CantidadNumCierre(fecha, idusuario, id);
+            return Ok(result);
+        }
+
+        [HttpGet("FacturasxJornada")]
+        public IActionResult FacturasxJornada(int id, DateTime fechajornada)
+        {
+            var result = _service.FacturasxJornada(id, fechajornada);
+            return Ok(result);
+        }
+
         [HttpPost("AgregarCierre")]
         public IActionResult AgregarCierre(CierreDto entidad)
         {

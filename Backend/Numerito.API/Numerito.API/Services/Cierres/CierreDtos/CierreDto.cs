@@ -9,5 +9,6 @@
         public int UsuarioId { get; set; }
 
         public DateTime FechaCierre { get; set; }
+        public int NumeroRegistro { get; internal set; }
     }
 }

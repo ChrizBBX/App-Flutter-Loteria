@@ -3,12 +3,15 @@
 import 'dart:convert';
 import 'package:app_loteria/models/Cierre.dart';
 import 'package:app_loteria/models/Usuario.dart';
+import 'package:app_loteria/screens/cierre/facturasxcierre_screen.dart';
+import 'package:app_loteria/screens/cierre/pdfcierre_screen.dart';
 import 'package:app_loteria/toastconfig/toastconfig.dart';
 import 'package:app_loteria/utils/colorPalette.dart';
 import 'package:app_loteria/widgets/appbar_roots.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:app_loteria/api.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Usuarios {
@@ -114,7 +117,10 @@ class _ListCierreScreenState extends State<ListCierreScreen> {
 
   Future<void> _fetchCierreList() async {
     try {
-      final response = await http.get(Uri.parse('${apiUrl}Cierre/Listado'));
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      int id = prefs.getInt('usuarioId') ?? 0;
+      final response =
+          await http.get(Uri.parse('${apiUrl}Cierre/Listado?id=$id'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body)['data'];
@@ -140,9 +146,12 @@ class _ListCierreScreenState extends State<ListCierreScreen> {
 
   void _filterCierres(String query) {
     setState(() {
-      filteredcierres = cierres
-          .where((cierre) => cierre.fechaCierre.weekday.toString() == query)
-          .toList();
+      filteredcierres = cierres.where((cierre) {
+        String formattedDate =
+            DateFormat('d/M/y').format(cierre.fechaCierre).toLowerCase();
+        String lowercaseQuery = query.toLowerCase();
+        return formattedDate.contains(lowercaseQuery);
+      }).toList();
     });
   }
 
@@ -202,11 +211,60 @@ class _ListCierreScreenState extends State<ListCierreScreen> {
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    title: Text('Número Ganador: ${cierre.numeroId}'),
-                    subtitle: Text('Fecha: ${cierre.fechaCierre.weekday}'),
+                    title: Text(_getSorteMessage(cierre.numeroRegistro)),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Número Ganador: ${cierre.numeroId}'),
+                        Text(
+                            'Fecha: ${DateFormat('d/M/y').format(cierre.fechaCierre)}'),
+                      ],
+                    ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        const SizedBox(width: 8.0),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: ColorPalette.darkblueColorApp,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => FacturaxCierreScreen(
+                                          id: cierre.numeroRegistro,
+                                          fechajornada: cierre.fechaCierre,
+                                        )),
+                              );
+                            },
+                            icon: const Icon(Icons.list_alt,
+                                color: Color.fromARGB(255, 255, 255, 255)),
+                          ),
+                        ),
+                        const SizedBox(width: 8.0),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: ColorPalette.darkblueColorApp,
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: IconButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ReportePDF_CierreSorteo(
+                                          id: cierre.numeroRegistro,
+                                          fechajornada: cierre.fechaCierre,
+                                        )),
+                              );
+                            },
+                            icon: const Icon(Icons.print,
+                                color: Color.fromARGB(255, 255, 255, 255)),
+                          ),
+                        ),
                         const SizedBox(width: 8.0),
                         Container(
                           decoration: BoxDecoration(
@@ -216,7 +274,8 @@ class _ListCierreScreenState extends State<ListCierreScreen> {
                           child: IconButton(
                             onPressed: () => _showDeleteConfirmationDialog(
                                 cierre.cierreId.toString()),
-                            icon: const Icon(Icons.delete),
+                            icon: const Icon(Icons.delete,
+                                color: Color.fromARGB(255, 255, 255, 255)),
                           ),
                         ),
                       ],
@@ -229,6 +288,19 @@ class _ListCierreScreenState extends State<ListCierreScreen> {
         ],
       ),
     );
+  }
+
+  String _getSorteMessage(int numeroRegistro) {
+    switch (numeroRegistro) {
+      case 1:
+        return 'Sorte 11 AM';
+      case 2:
+        return 'Sorte 3 PM';
+      case 3:
+        return 'Sorte 9 PM';
+      default:
+        return 'Sorte Desconocido';
+    }
   }
 
   void _showDeleteConfirmationDialog(String? id) {
@@ -247,6 +319,9 @@ class _ListCierreScreenState extends State<ListCierreScreen> {
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorPalette.darkblueColorApp,
+              ),
               onPressed: () {
                 if (id != null) {
                   _deleteCierre(int.parse(id));
@@ -312,6 +387,7 @@ class _ListCierreScreenState extends State<ListCierreScreen> {
       usuarioId: prefs.getInt('usuarioId') ?? 0,
       numeroId: int.parse(num),
       fechaCierre: DateTime.now(),
+      numeroRegistro: 0,
     );
 
     String userJson = jsonEncode(userData);
@@ -336,6 +412,7 @@ class _ListCierreScreenState extends State<ListCierreScreen> {
                 textAlign: TextAlign.start),
             borderRadius: 5,
           ).show(context);
+          _fetchCierreList();
         } else if (respuesta.toString().contains("Ya se han realizado")) {
           CherryToast.warning(
             title: Text('$respuesta',

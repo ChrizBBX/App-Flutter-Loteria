@@ -11,25 +11,24 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-class ReportePDFNumerosVendidos extends StatefulWidget {
-  final DateTime fechaInicio;
-  final DateTime fechaFin;
+class PDFSorteo extends StatefulWidget {
+ final DateTime fechajornada;
+  final int id;
 
-  const ReportePDFNumerosVendidos({
+  const PDFSorteo({
     Key? key,
-    required this.fechaInicio,
-    required this.fechaFin,
+    required this.id,
+    required this.fechajornada,
   }) : super(key: key);
 
   @override
-  _ReportePDFNumerosVendidosState createState() =>
-      _ReportePDFNumerosVendidosState();
+  _PDFSorteoState createState() =>
+      _PDFSorteoState();
 }
 
-class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
-  Uint8List _pdfBytes = Uint8List(0); 
+class _PDFSorteoState extends State<PDFSorteo> {
+  late Uint8List _pdfBytes;
   List<Map<String, dynamic>> _data = [];
   bool _isLoading = true;
 
@@ -41,15 +40,11 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
 
   Future<void> fetchDataAndGeneratePDF() async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      int id = prefs.getInt('usuarioId') ?? 0;
-      String formattedFechaInicio =
-          DateFormat('yyyy-dd-MM').format(widget.fechaInicio);
-      String formattedFechaFin =
-          DateFormat('yyyy-dd-MM').format(widget.fechaFin);
-
+        int id = widget.id;
+      String formattedfechajornada =
+          DateFormat('yyyy-MM-dd').format(widget.fechajornada);
       final response = await http.get(Uri.parse(
-          '${apiUrl}Reporte/NumerosVendidos?fecha_inicio=$formattedFechaInicio&fecha_fin=$formattedFechaFin&id=$id'));
+          '${apiUrl}Cierre/FacturasxJornada?id=$id&fechajornada=$formattedfechajornada'));
 
       if (response.statusCode == 200) {
         dynamic responseData = json.decode(response.body);
@@ -70,16 +65,10 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
   }
 
   Future<Uint8List> generatePDF() async {
-    final img = await rootBundle.load('images/LogoBlanco.png');
-    final imageBytes = img.buffer.asUint8List();
-    pw.Image image1 = pw.Image(pw.MemoryImage(imageBytes));
-
     final PdfPageFormat pageFormat = const PdfPageFormat(
         8.0 * PdfPageFormat.cm, 15.0 * PdfPageFormat.cm,
         marginAll: 1.0 * PdfPageFormat.mm);
     final pw.Document pdf = pw.Document();
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String usuario = prefs.getString('nombreUsuario') ?? '';
 
     for (var saleData in _data) {
       if (saleData['data'] is List) {
@@ -99,10 +88,10 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
                     child: pw.Column(
                       mainAxisAlignment: pw.MainAxisAlignment.center,
                       children: [
-                        pw.Container(
-                          alignment: pw.Alignment.center,
-                          height: 20,
-                          child: image1,
+                        pw.Text(
+                          'NUMERITO'.toUpperCase(),
+                          style: const pw.TextStyle(
+                              fontSize: 16, color: PdfColors.white),
                         ),
                         pw.Text(
                           'Recibo de Venta'.toUpperCase(),
@@ -132,16 +121,6 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
                         pw.Text('#${row['ventaId']?.toString()}'),
                         pw.Text(
                           'Fecha ${DateFormat('dd/MM/yyyy HH:mm').format(DateTime.parse(row['fechaCreacion']))}',
-                          style: const pw.TextStyle(fontSize: 8),
-                        ),
-                      ],
-                    ),
-                    pw.SizedBox(height: 5.00),
-                    pw.Row(
-                      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                      children: [
-                        pw.Text(
-                          'Usuario: ${usuario}',
                           style: const pw.TextStyle(fontSize: 8),
                         ),
                       ],
@@ -262,7 +241,7 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reporte de Ventas'),
+        title: const Text('Facturas del Sorteo'),
         backgroundColor: ColorPalette.darkblueColorApp,
       ),
       body: _isLoading
@@ -278,7 +257,7 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
                   build: (format) => _generatePdfPreview(format, _pdfBytes),
                 )
               : const Center(
-                  child: Text('Cargando...'),
+                  child: Text('No se pudo generar el PDF'),
                 ),
     );
   }
@@ -286,15 +265,4 @@ class _ReportePDFNumerosVendidosState extends State<ReportePDFNumerosVendidos> {
   Uint8List _generatePdfPreview(PdfPageFormat format, Uint8List data) {
     return data;
   }
-}
-
-void main() {
-  runApp(
-    MaterialApp(
-      home: ReportePDFNumerosVendidos(
-        fechaInicio: DateTime.now(),
-        fechaFin: DateTime.now(),
-      ),
-    ),
-  );
 }

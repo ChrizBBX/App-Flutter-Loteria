@@ -5,6 +5,7 @@ class Cierre {
   final int numeroId;
   final int usuarioId;
   final DateTime fechaCierre;
+  final int numeroRegistro;
 
 
   Cierre({
@@ -12,6 +13,7 @@ class Cierre {
     required this.numeroId,
     required this.usuarioId,
     required this.fechaCierre,
+    required this.numeroRegistro
  
   });
 
@@ -21,16 +23,17 @@ class Cierre {
       numeroId: json['numeroId'] as int,
       usuarioId: json['usuarioId'] as int,
       fechaCierre: json['fechaCierre'] as DateTime,
-
+      numeroRegistro: json['numeroRegistro'],
     );
   }
 
-  Map<String, dynamic> toJson() {
+ Map<String, dynamic> toJson() {
     return {
-      "metodoPagoId": cierreId,
-      "descripcion": numeroId,
+      "cierreId": cierreId,
       "usuarioId": usuarioId,
-      "fechaCierre": fechaCierre,
+      "numeroId": numeroId,
+      "fechaCierre": fechaCierre.toIso8601String(),
+      "numeroRegistro" : numeroRegistro,
     };
   }
 }

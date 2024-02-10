@@ -11,14 +11,21 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ReportePDF_Cierre extends StatefulWidget {
-  const ReportePDF_Cierre({Key? key}) : super(key: key);
+class ReportePDF_CierreSorteo extends StatefulWidget {
+  final DateTime fechajornada;
+  final int id;
 
+  const ReportePDF_CierreSorteo({
+    Key? key,
+    required this.id,
+    required this.fechajornada,
+  }) : super(key: key);
   @override
-  _ReportePDF_CierreState createState() => _ReportePDF_CierreState();
+  _ReportePDF_CierreSorteoState createState() =>
+      _ReportePDF_CierreSorteoState();
 }
 
-class _ReportePDF_CierreState extends State<ReportePDF_Cierre> {
+class _ReportePDF_CierreSorteoState extends State<ReportePDF_CierreSorteo> {
   late Uint8List _pdfBytes;
   List<Map<String, dynamic>> _data = [];
   bool _isLoading = true;
@@ -32,9 +39,11 @@ class _ReportePDF_CierreState extends State<ReportePDF_Cierre> {
   Future<void> fetchDataAndGeneratePDF() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      int id = prefs.getInt('usuarioId') ?? 0;
+      int idusuario = prefs.getInt('usuarioId') ?? 0;
+      int id = widget.id;
+      String formattedfechajornada = DateFormat('yyyy-MM-dd').format(widget.fechajornada);
       final response = await http.get(Uri.parse(
-          '${apiUrl}Reporte/ReporteCierres?fecha=${DateTime.now()}&id=$id'));
+          '${apiUrl}Cierre/CantidadNumCierre?fecha=$formattedfechajornada&idusuario=$idusuario&id=$id'));
 
       if (response.statusCode == 200) {
         dynamic responseData = json.decode(response.body);
@@ -96,18 +105,11 @@ class _ReportePDF_CierreState extends State<ReportePDF_Cierre> {
             return [
               pw.SizedBox(height: 5.00),
               pw.Table.fromTextArray(
-                headers: ['N° Factura', 'Hora y Fecha', 'Total'],
+                headers: ['N°', 'Cantidad'],
                 data: dataList?.map((row) {
                       return [
-                        row['ventaId']?.toString() ?? '',
-                        DateFormat('HH:mm dd/MM/yyyy').format(
-                            DateTime.parse(row['fechaCreacion'].toString())),
-                        row['cantidad'] != null
-                            ? NumberFormat.currency(
-                                locale: 'es_HN',
-                                symbol: 'LPS',
-                              ).format(row['cantidad'])
-                            : 'N/A',
+                        row['idNumero']?.toString() ?? '',
+                        row['cantidad']?.toString() ?? '',
                       ];
                     }).toList() ??
                     [],
@@ -133,34 +135,7 @@ class _ReportePDF_CierreState extends State<ReportePDF_Cierre> {
                 },
                 context: context,
               ),
-              pw.Row(
-                mainAxisAlignment: pw.MainAxisAlignment.end,
-                children: [
-                  pw.Text('Total: ',
-                      style: pw.TextStyle(
-                        fontWeight: pw.FontWeight.bold,
-                        fontSize: 8,
-                      )),
-                  pw.Text(
-                    NumberFormat.currency(
-                      locale: 'es_HN',
-                      symbol: 'LPS',
-                    ).format(dataList?.fold<double>(
-                          0.0,
-                          (prev, data) =>
-                              prev +
-                              (data['cantidad'] != null
-                                  ? data['cantidad']
-                                  : 0.0),
-                        ) ??
-                        0.0),
-                    style: pw.TextStyle(
-                      fontWeight: pw.FontWeight.bold,
-                      fontSize: 8,
-                    ),
-                  ),
-                ],
-              ),
+
             ];
           },
         ),
@@ -196,7 +171,7 @@ class _ReportePDF_CierreState extends State<ReportePDF_Cierre> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Reporte Cierre de Dia'),
+        title: const Text('Reporte Cierre de Sorteo'),
         backgroundColor: ColorPalette.darkblueColorApp,
       ),
       body: _isLoading
@@ -216,8 +191,4 @@ class _ReportePDF_CierreState extends State<ReportePDF_Cierre> {
   Uint8List _generatePdfPreview(PdfPageFormat format, Uint8List data) {
     return data;
   }
-}
-
-void main() {
-  runApp(const MaterialApp(home: ReportePDF_Cierre()));
 }

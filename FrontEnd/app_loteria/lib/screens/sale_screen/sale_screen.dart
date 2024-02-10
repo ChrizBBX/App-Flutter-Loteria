@@ -140,6 +140,9 @@ class _SaleScreenState extends State<SaleScreen> {
             selectedPaymentMethod != 0 &&
             detalles.isNotEmpty)
           ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: ColorPalette.darkblueColorApp,
+            ),
             onPressed: () {
               sendData(
                   context, selectedPerson, selectedPaymentMethod, detalles);
@@ -431,6 +434,9 @@ class _SaleScreenState extends State<SaleScreen> {
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorPalette.darkblueColorApp,
+              ),
               onPressed: () {
                 setState(() {
                   detalles.remove(numero);

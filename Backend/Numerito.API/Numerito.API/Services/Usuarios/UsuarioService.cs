@@ -10,7 +10,9 @@ using Numerito.API.Data;
 using Numerito.API.Data.Entities;
 using Numerito.API.Services.Usuarios.UsuariosDto;
 using Numerito.API.Utility;
+using Numerito.API.Data.Entities;
 using static Numerito.API.Data.Entities.Usuario;
+
 
 namespace Numerito.API.Services.Usuarios
 {
@@ -55,7 +57,8 @@ namespace Numerito.API.Services.Usuarios
             Encrypt encrypt = new Encrypt();
             var password = encrypt.HashPassword(entidad.Contrasena);
 
-            var result = (from usuario in _context.Usuarios.AsQueryable()
+            var result = (from usuario in _context.Usuarios
+                          join pago in _context.Pagos on usuario.UsuarioId equals pago.UsuarioId 
                           where usuario.NombreUsuario == entidad.NombreUsuario && usuario.Contrasena == password
                           select new UsuarioDto
                           {
@@ -63,8 +66,10 @@ namespace Numerito.API.Services.Usuarios
                               NombreUsuario = usuario.NombreUsuario,
                               PersonaId = usuario.PersonaId,
                               Admin = usuario.Admin,
-                          }
-                          ).ToList();
+                              FechaSus = pago.FechaVencimiento 
+                              
+                          }).ToList();
+
 
             if (result.Count < 1)
                 return Result<List<UsuarioDto>>.Fault(OutputMessage.FaultLogin);

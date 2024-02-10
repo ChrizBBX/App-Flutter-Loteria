@@ -91,14 +91,14 @@ namespace Numerito.API.Services.Reportes
             return Result<List<VentaCompleta>>.Success(result);
         }
 
-        public Result<List<VentaCompleta>> NumerosVendidos(DateTime fecha_inicio, DateTime fecha_fin)
+        public Result<List<VentaCompleta>> NumerosVendidos(DateTime fecha_inicio, DateTime fecha_fin, int id)
         {
             var result = (from ventaDetalle in _context.VentaDetalles
                           join venta in _context.Ventas on ventaDetalle.VentaId equals venta.VentaId
                           join persona in _context.Personas on venta.PersonaId equals persona.PersonaId
                           join metodopago in _context.MetodosPagos on venta.MetodoPagoId equals metodopago.MetodoPagoId
                           join numero in _context.Numeros on ventaDetalle.NumeroId equals numero.NumeroId
-                          where venta.FechaCreacion >= fecha_inicio && venta.FechaCreacion <= fecha_fin
+                          where venta.FechaCreacion >= fecha_inicio && venta.FechaCreacion <= fecha_fin && venta.UsuarioCreacion == id
                           select new
                           {
                               VentaId = venta.VentaId,
@@ -132,11 +132,11 @@ namespace Numerito.API.Services.Reportes
         }
 
 
-        public Result<List<VentaCompleta>> ReporteCierres(DateTime fecha)
+        public Result<List<VentaCompleta>> ReporteCierres(DateTime fecha, int id)
         {
             var result = (from ventaDetalle in _context.VentaDetalles
                           join venta in _context.Ventas on ventaDetalle.VentaId equals venta.VentaId
-                          where venta.FechaCreacion.Date == fecha.Date
+                          where venta.FechaCreacion.Date == fecha.Date && venta.UsuarioCreacion == id
                           group new { ventaDetalle, venta } by venta.VentaId into grouped
                           select new VentaCompleta
                           {

@@ -21,6 +21,7 @@ class CardListWidget extends StatefulWidget {
 
 class _CardListWidgetState extends State<CardListWidget> {
   String nombreUsuario = '';
+  DateTime fechaSus = new DateTime(2022, 1, 1);
 
   @override
   void initState() {
@@ -30,8 +31,10 @@ class _CardListWidgetState extends State<CardListWidget> {
 
   Future<void> _loadData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String fechaSusString = prefs.getString('fechaSus') ?? '';
     setState(() {
       nombreUsuario = prefs.getString('nombreUsuario') ?? '';
+      fechaSus = DateTime.parse(fechaSusString);
     });
   }
 
@@ -90,7 +93,7 @@ class _CardListWidgetState extends State<CardListWidget> {
             children: [
               GestureDetector(
                 onTap: () {
-                  opciones(context);
+                  opciones(context, fechaSus);
                 },
                 child: CardWidget(
                   title: 'Reportes',
@@ -102,8 +105,7 @@ class _CardListWidgetState extends State<CardListWidget> {
                 onTap: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => ListCierreScreen()),
+                    MaterialPageRoute(builder: (context) => ListCierreScreen()),
                   );
                 },
                 child: CardWidget(
@@ -153,8 +155,7 @@ class _CardListWidgetState extends State<CardListWidget> {
     return formattedTime;
   }
 }
-
-opciones(context) {
+opciones(BuildContext context, DateTime fechaSus) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
@@ -163,37 +164,40 @@ opciones(context) {
         content: SingleChildScrollView(
           child: Column(
             children: [
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ReportePDFInventario()),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        width: 1,
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    children: const [
-                      Expanded(
-                        child: Text(
-                          'Inventario',
-                          style: TextStyle(fontSize: 16),
+              Visibility(
+                visible: fechaSus.isAfter(DateTime.now()),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ReportePDFInventario()),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          width: 1,
+                          color: Colors.grey.shade300,
                         ),
                       ),
-                      Icon(
-                        Icons.document_scanner,
-                        color: ColorPalette.darkblueColorApp,
-                      ),
-                    ],
+                    ),
+                    child: Row(
+                      children: const [
+                        Expanded(
+                          child: Text(
+                            'Inventario',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Icon(
+                          Icons.document_scanner,
+                          color: ColorPalette.darkblueColorApp,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -227,67 +231,73 @@ opciones(context) {
                   ),
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  _mostrarSelectorFechas(context, 3);
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        width: 1,
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    children: const [
-                      Expanded(
-                        child: Text(
-                          'Numeros Más Vendidos',
-                          style: TextStyle(fontSize: 16),
+              Visibility(
+                visible: fechaSus.isAfter(DateTime.now()),
+                child: InkWell(
+                  onTap: () {
+                    _mostrarSelectorFechas(context, 3);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          width: 1,
+                          color: Colors.grey.shade300,
                         ),
                       ),
-                      Icon(
-                        Icons.document_scanner,
-                        color: ColorPalette.darkblueColorApp,
-                      ),
-                    ],
+                    ),
+                    child: Row(
+                      children: const [
+                        Expanded(
+                          child: Text(
+                            'Numeros Más Vendidos',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Icon(
+                          Icons.document_scanner,
+                          color: ColorPalette.darkblueColorApp,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => const ReportePDF_Cierre()),
-                  );
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        width: 1,
-                        color: Colors.grey.shade300,
-                      ),
-                    ),
-                  ),
-                  child: Row(
-                    children: const [
-                      Expanded(
-                        child: Text(
-                          'Cierre del Dia',
-                          style: TextStyle(fontSize: 16),
+              Visibility(
+                visible: fechaSus.isAfter(DateTime.now()),
+                child: InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const ReportePDF_Cierre()),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          width: 1,
+                          color: Colors.grey.shade300,
                         ),
                       ),
-                      Icon(
-                        Icons.document_scanner,
-                        color: ColorPalette.darkblueColorApp,
-                      ),
-                    ],
+                    ),
+                    child: Row(
+                      children: const [
+                        Expanded(
+                          child: Text(
+                            'Cierre del Dia',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                        ),
+                        Icon(
+                          Icons.document_scanner,
+                          color: ColorPalette.darkblueColorApp,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),

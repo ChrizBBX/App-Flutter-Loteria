@@ -1,16 +1,108 @@
-// ignore_for_file: use_build_context_synchronously
+// ignore_for_file: use_build_context_synchronously, library_private_types_in_public_api
 
 import 'dart:convert';
+import 'package:app_loteria/models/Cierre.dart';
 import 'package:app_loteria/models/Usuario.dart';
-import 'package:app_loteria/screens/usuario/createusuario_screen.dart';
-import 'package:app_loteria/screens/usuario/editusuario_screen.dart';
+import 'package:app_loteria/screens/cierre/pdfsorteo_screen.dart';
+import 'package:app_loteria/screens/sale_screen/factura_screen.dart';
 import 'package:app_loteria/toastconfig/toastconfig.dart';
 import 'package:app_loteria/utils/colorPalette.dart';
 import 'package:app_loteria/widgets/appbar_roots.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:app_loteria/api.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+class VentaDetalle {
+  int ventaDetalleId;
+  int numeroId;
+  String numeroDescripcion;
+  int valor;
+
+  VentaDetalle({
+    required this.ventaDetalleId,
+    required this.numeroId,
+    required this.numeroDescripcion,
+    required this.valor,
+  });
+
+  factory VentaDetalle.fromJson(Map<String, dynamic> json) {
+    return VentaDetalle(
+      ventaDetalleId: json["ventaDetalleId"],
+      numeroId: json["numeroId"],
+      numeroDescripcion: json["numeroDescripcion"],
+      valor: json["valor"],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "ventaDetalleId": ventaDetalleId,
+      "numeroId": numeroId,
+      "numeroDescripcion": numeroDescripcion,
+      "valor": valor,
+    };
+  }
+}
+
+class VentaEncabezado {
+  int ventaId;
+  DateTime fechaCreacion;
+  String nombres;
+  String? apellidos;
+  String? identidad;
+  String metodoPagoDescripcion;
+  List<VentaDetalle> detalles;
+  String? descripcionNumero;
+  int idNumero;
+  int cantidad;
+
+  VentaEncabezado({
+    required this.ventaId,
+    required this.fechaCreacion,
+    required this.nombres,
+    required this.apellidos,
+    required this.identidad,
+    required this.metodoPagoDescripcion,
+    required this.detalles,
+    required this.descripcionNumero,
+    required this.idNumero,
+    required this.cantidad,
+  });
+
+  factory VentaEncabezado.fromJson(Map<String, dynamic> json) {
+    return VentaEncabezado(
+      ventaId: json["ventaId"],
+      fechaCreacion: json["fechaCreacion"],
+      nombres: json["nombres"],
+      apellidos: json["apellidos"],
+      identidad: json["identidad"],
+      metodoPagoDescripcion: json["metodoPagoDescripcion"],
+      detalles: (json["detalles"] as List<dynamic>)
+          .map((detalle) => VentaDetalle.fromJson(detalle))
+          .toList(),
+      descripcionNumero: json["descripcionNumero"],
+      idNumero: json["idNumero"],
+      cantidad: json["cantidad"],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "ventaId": ventaId,
+      "fechaCreacion": fechaCreacion,
+      "nombres": nombres,
+      "apellidos": apellidos,
+      "identidad": identidad,
+      "metodoPagoDescripcion": metodoPagoDescripcion,
+      "detalles": detalles.map((detalle) => detalle.toJson()).toList(),
+      "descripcionNumero": descripcionNumero,
+      "idNumero": idNumero,
+      "cantidad": cantidad,
+    };
+  }
+}
 
 class Usuarios {
   final int usuarioId;
@@ -69,15 +161,23 @@ class Usuarios {
       "UsuarioCreacion": usuarioCreacion,
       "FechaCreacion": fechaCreacion.toIso8601String(),
       "UsuarioModificacion": usuarioModificacion,
-      "FechaModificacion": fechaModificacion?.toIso8601String() ?? null,
+      "FechaModificacion": fechaModificacion?.toIso8601String(),
       "Estado": estado,
     };
   }
 }
 
-class ListUsuarioScreen extends StatefulWidget {
+class FacturaxCierreScreen extends StatefulWidget {
+  final DateTime fechajornada;
+  final int id;
+
+  const FacturaxCierreScreen({
+    Key? key,
+    required this.id,
+    required this.fechajornada,
+  }) : super(key: key);
   @override
-  _ListUsuarioScreenState createState() => _ListUsuarioScreenState();
+  _FacturaxCierreScreenState createState() => _FacturaxCierreScreenState();
 }
 
 class UserDataProvider {
@@ -98,37 +198,36 @@ class UserDataProvider {
   }
 }
 
-class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
-  List<Usuarios> usuarios = [];
-  List<Usuarios> filteredUsuarios = [];
+class _FacturaxCierreScreenState extends State<FacturaxCierreScreen> {
+  List<VentaEncabezado> facturas = [];
+  List<VentaEncabezado> filteredfacturas = [];
   late Usuario _userProfile;
   TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    _fetchUserList();
+    _fetchCierreList();
     _loadUserData();
   }
 
-  Future<void> _fetchUserList() async {
+  Future<void> _fetchCierreList() async {
     try {
-      final response = await http.get(Uri.parse('${apiUrl}Usuario/Listado'));
+      int id = widget.id;
+      String formattedfechajornada =
+          DateFormat('yyyy-MM-dd').format(widget.fechajornada);
+      final response = await http.get(Uri.parse(
+          '${apiUrl}Cierre/FacturasxJornada?id=$id&fechajornada=$formattedfechajornada'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body)['data'];
 
         setState(() {
-          usuarios = data.map((item) {
-            // Convertir las fechas de String a DateTime
+          facturas = data.map((item) {
             item['fechaCreacion'] = DateTime.parse(item['fechaCreacion']);
-            item['fechaModificacion'] = item['fechaModificacion'] != null
-                ? DateTime.parse(item['fechaModificacion'])
-                : null;
-
-            return Usuarios.fromJson(item);
+            return VentaEncabezado.fromJson(item);
           }).toList();
-          filteredUsuarios = List.from(usuarios);
+          filteredfacturas = List.from(facturas);
         });
       } else {}
     } catch (e) {}
@@ -142,23 +241,23 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
     });
   }
 
-  void _filterUsuarios(String query) {
+  void _filterFacturas(String query) {
     setState(() {
-      filteredUsuarios = usuarios
-          .where((usuario) =>
-              usuario.nombreUsuario
-                  .toLowerCase()
-                  .contains(query.toLowerCase()) ||
-              (usuario.personaId.toString().contains(query)) ||
-              (usuario.sucursalId.toString().contains(query)))
-          .toList();
+      filteredfacturas = facturas.where((factura) {
+        String formattedDate = DateFormat('d/M/y')
+            .format(factura.fechaCreacion as DateTime)
+            .toLowerCase();
+        String lowercaseQuery = query.toLowerCase();
+        return formattedDate.contains(lowercaseQuery);
+      }).toList();
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBarWithBackButton(
-        title: 'Listado de Usuarios',
+        title: 'Listado de Facturas',
         profileImageUrl: _userProfile.imagen,
         onProfilePressed: () {},
       ),
@@ -171,7 +270,11 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => NewUserForm()),
+                MaterialPageRoute(
+                    builder: (context) => (PDFSorteo(
+                          id: widget.id,
+                          fechajornada: widget.fechajornada,
+                        ))),
               );
             },
             style: ElevatedButton.styleFrom(
@@ -183,7 +286,7 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
               ),
             ),
             child: const Text(
-              'Nuevo',
+              'PDF Facturas del Sorteo',
               style: TextStyle(
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
@@ -195,7 +298,7 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
             padding: const EdgeInsets.all(8.0),
             child: TextField(
               controller: searchController,
-              onChanged: _filterUsuarios,
+              onChanged: _filterFacturas,
               decoration: InputDecoration(
                 labelText: 'Buscar',
                 border: OutlineInputBorder(
@@ -206,21 +309,33 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: filteredUsuarios.length,
+              itemCount: filteredfacturas.length,
               itemBuilder: (context, index) {
-                final usuario = filteredUsuarios[index];
+                final factura = filteredfacturas[index];
 
                 return Card(
                   margin: const EdgeInsets.all(8.0),
                   child: ListTile(
-                    title: Text('Nombre de Usuario: ${usuario.nombreUsuario}'),
-                    subtitle: Text('ID de Persona: ${usuario.personaId}'),
+                    title: Text('Factura #: ${factura.ventaId}'),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                            'Fecha de Venta: ${DateFormat('d/M/y').format(factura.fechaCreacion)}'),
+                        Text('Identidad: ${factura.identidad ?? 'N/A'}'),
+                        Text(
+                            'Cliente: ${factura.nombres} ${factura.apellidos ?? ''}'),
+                        Text(
+                            'Método de Pago: ${factura.metodoPagoDescripcion}'),
+                      ],
+                    ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        const SizedBox(width: 8.0),
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.amber,
+                            color: ColorPalette.darkblueColorApp,
                             borderRadius: BorderRadius.circular(8.0),
                           ),
                           child: IconButton(
@@ -228,25 +343,11 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      EditUserForm(usuario: usuario),
-                                ),
+                                    builder: (context) => (FacturaPDF(
+                                        ID: factura.ventaId.toString()))),
                               );
                             },
-                            icon: const Icon(Icons.edit,
-                                color: Color.fromARGB(255, 255, 255, 255)),
-                          ),
-                        ),
-                        const SizedBox(width: 8.0),
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(8.0),
-                          ),
-                          child: IconButton(
-                            onPressed: () => _showDeleteConfirmationDialog(
-                                usuario.usuarioId.toString()),
-                            icon: const Icon(Icons.delete,
+                            icon: const Icon(Icons.print,
                                 color: Color.fromARGB(255, 255, 255, 255)),
                           ),
                         ),
@@ -260,85 +361,5 @@ class _ListUsuarioScreenState extends State<ListUsuarioScreen> {
         ],
       ),
     );
-  }
-
-  void _showDeleteConfirmationDialog(String? usuarioId) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Eliminar Usuario'),
-          content:
-              const Text('¿Estás seguro de que quieres eliminar este usuario?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancelar'),
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorPalette.darkblueColorApp,
-              ),
-              onPressed: () {
-                if (usuarioId != null) {
-                  _deleteUsuario(int.parse(usuarioId));
-                  Navigator.of(context).pop();
-                }
-              },
-              child: const Text('Eliminar'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _deleteUsuario(int usuarioId) async {
-    try {
-      final response = await http.put(Uri.parse(
-          '${apiUrl}Usuario/DesactivarUsuarios?usuarioId=$usuarioId'));
-
-      if (response.statusCode == 200) {
-        final decodedJson = jsonDecode(response.body);
-        final respuesta = decodedJson["message"];
-        if (respuesta
-            .toString()
-            .contains("El usuario se ha desactivado exitosamente")) {
-          CherryToast.success(
-            title: Text('$respuesta',
-                style:
-                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
-                textAlign: TextAlign.start),
-            borderRadius: 5,
-          ).show(context);
-        } else if (respuesta
-            .toString()
-            .contains("Hay campos vacios o la entidad es invalida")) {
-          CherryToast.warning(
-            title: Text('$respuesta',
-                style:
-                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
-                textAlign: TextAlign.start),
-            borderRadius: 5,
-          ).show(context);
-        } else if (respuesta
-            .toString()
-            .contains("El Usuario seleccionado no existe")) {
-          CherryToast.warning(
-            title: Text('$respuesta',
-                style:
-                    const TextStyle(color: Color.fromARGB(255, 226, 226, 226)),
-                textAlign: TextAlign.start),
-            borderRadius: 5,
-          ).show(context);
-        }
-      } else {}
-    } catch (e) {
-      CherryToast.warning(
-              title: const Text('Error al intentar eliminar el usuario'))
-          .show(context);
-    }
   }
 }

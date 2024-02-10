@@ -25,9 +25,9 @@ namespace Numerito.API.Controllers
         }
 
         [HttpGet("NumerosVendidos")]
-        public IActionResult NumerosVendidos(DateTime fecha_inicio, DateTime fecha_fin)
+        public IActionResult NumerosVendidos(DateTime fecha_inicio, DateTime fecha_fin, int id)
         {
-            var result = _reportesService.NumerosVendidos(fecha_inicio, fecha_fin);
+            var result = _reportesService.NumerosVendidos(fecha_inicio, fecha_fin, id);
             return Ok(result);
         }
 
@@ -39,9 +39,9 @@ namespace Numerito.API.Controllers
         }
 
         [HttpGet("ReporteCierres")]
-        public IActionResult ReporteCierres(DateTime fecha)
+        public IActionResult ReporteCierres(DateTime fecha, int id)
         {
-            var result = _reportesService.ReporteCierres(fecha);
+            var result = _reportesService.ReporteCierres(fecha, id);
             return Ok(result);
         }
     }

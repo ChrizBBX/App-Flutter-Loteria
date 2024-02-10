@@ -329,4 +329,52 @@ class _NewUserFormState extends State<NewUserForm> {
       } else {}
     } catch (e) {}
   }
+
+//para cuando este en uso la membresia
+  
+void _mostrarOpcionesPremium(BuildContext context) {
+  showModalBottomSheet(
+    context: context,
+    builder: (BuildContext context) {
+      return Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildPlanCard('1 Mes', '\$7.99'),
+            _buildPlanCard('3 Meses', '\$9.99'),
+            _buildPlanCard('6 Meses', '\$12.99'),
+            SizedBox(height: 16.0),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Más tarde'),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+Widget _buildPlanCard(String duration, String price) {
+  return Card(
+    child: ListTile(
+      title: Text(duration),
+      subtitle: Text(price),
+      trailing: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: ColorPalette.darkblueColorApp,
+        ),
+        onPressed: () {
+          // Lógica para seleccionar el plan (puedes almacenar la selección en una variable si es necesario)
+          // También puedes usar esta función para mostrar detalles del plan si lo deseas
+        },
+        child: Text('Contratar'),
+      ),
+    ),
+  );
+}
+
 }

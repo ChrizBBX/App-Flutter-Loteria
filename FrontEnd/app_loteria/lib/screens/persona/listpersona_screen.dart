@@ -174,11 +174,11 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
                                 ),
                               );
                             },
-                            icon: const Icon(Icons.edit),
+                            icon: const Icon(Icons.edit,
+                                color: Color.fromARGB(255, 255, 255, 255)),
                           ),
                         ),
                         const SizedBox(width: 8.0),
-                        // Botón de Eliminar con fondo rojo
                         Container(
                           decoration: BoxDecoration(
                             color: Colors.red,
@@ -187,7 +187,8 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
                           child: IconButton(
                             onPressed: () => _showDeleteConfirmationDialog(
                                 persona.personaId),
-                            icon: const Icon(Icons.delete),
+                            icon: const Icon(Icons.delete,
+                                color: Color.fromARGB(255, 255, 255, 255)),
                           ),
                         ),
                       ],
@@ -218,6 +219,9 @@ class _ListPersonaScreenState extends State<ListPersonaScreen> {
               child: const Text('Cancelar'),
             ),
             ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: ColorPalette.darkblueColorApp,
+              ),
               onPressed: () {
                 _deletePersona(personaId);
                 Navigator.of(context).pop();
