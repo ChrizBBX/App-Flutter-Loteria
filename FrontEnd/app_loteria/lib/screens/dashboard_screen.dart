@@ -319,8 +319,6 @@ _mostrarSelectorFechas(BuildContext context, opcion) async {
         data: ThemeData.light().copyWith(
           primaryColor: ColorPalette
               .darkblueColorApp, // Cambia este color según tu preferencia
-          accentColor: ColorPalette
-              .darkblueColorApp, // Cambia este color según tu preferencia
           colorScheme:
               ColorScheme.light(primary: ColorPalette.darkblueColorApp),
           buttonTheme: ButtonThemeData(textTheme: ButtonTextTheme.primary),
