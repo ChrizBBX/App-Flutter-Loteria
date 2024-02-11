@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Numerito.API.Services.Ventas;
 using Numerito.API.Services.Ventas.VentasDto;
 
@@ -18,7 +17,7 @@ namespace Numerito.API.Controllers
 
 
         [HttpPost("AgregarVenta")]
-        public IActionResult AgregarVenta(VentaDtoC entidad) 
+        public IActionResult AgregarVenta(VentaDtoC entidad)
         {
             var result = _ventaService.AgregarVenta(entidad);
             return Ok(result);

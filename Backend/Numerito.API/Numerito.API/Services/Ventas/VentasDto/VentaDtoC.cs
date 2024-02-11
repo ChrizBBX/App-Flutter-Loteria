@@ -11,7 +11,7 @@
         public DateTime FechaVenta { get; set; }
 
         public int UsuarioCreacion { get; set; }
-        
-        public List<VentaDetalleDtoC> VentaDetalles { get; set; } 
+
+        public List<VentaDetalleDtoC> VentaDetalles { get; set; }
     }
 }

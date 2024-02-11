@@ -10,7 +10,7 @@ namespace Numerito.API.Services.Usuarios
     {
         PersonaRules personaRules = new PersonaRules();
         SucursalRules sucursalRules = new SucursalRules();
-        public Result<bool> VerificarUsuarioId(List<Usuario> listaUsuarios,int usuarioId)
+        public Result<bool> VerificarUsuarioId(List<Usuario> listaUsuarios, int usuarioId)
         {
             var result = listaUsuarios.FirstOrDefault(x => x.UsuarioId == usuarioId);
 
@@ -30,7 +30,7 @@ namespace Numerito.API.Services.Usuarios
             return Result<bool>.Success(true);
         }
 
-        public Result<bool> AgregarUsuarioValidaciones(Usuario usuario, List<Persona> listaPersonas,List<Usuario> listaUsuarios,List<Sucursal> listaSucursales)
+        public Result<bool> AgregarUsuarioValidaciones(Usuario usuario, List<Persona> listaPersonas, List<Usuario> listaUsuarios, List<Sucursal> listaSucursales)
         {
             Result<bool> validarPersonaId = personaRules.VerificarPersonaId(listaPersonas, usuario.PersonaId);
             if (!validarPersonaId.Ok)
@@ -40,7 +40,7 @@ namespace Numerito.API.Services.Usuarios
             if (!validarUsuarioId.Ok)
                 return Result<bool>.Fault(validarUsuarioId.Message);
 
-            Result<bool> validarSucursalId = sucursalRules.VerificarSucursalUsuario(listaSucursales,usuario.SucursalId);
+            Result<bool> validarSucursalId = sucursalRules.VerificarSucursalUsuario(listaSucursales, usuario.SucursalId);
             if (!validarSucursalId.Ok)
                 return Result<bool>.Fault(validarSucursalId.Message);
 

@@ -6,7 +6,7 @@ namespace LoteriaApp.WebApi.Data.EntityContext
 {
     public class NumeroContext : IEntityTypeConfiguration<Numero>
     {
-        public void Configure(EntityTypeBuilder<Numero> builder) 
+        public void Configure(EntityTypeBuilder<Numero> builder)
         {
             builder.ToTable("Numeros");
             builder.HasKey(e => e.NumeroId).HasName("PK_Numeros_NumeroId");

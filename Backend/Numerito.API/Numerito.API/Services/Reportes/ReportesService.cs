@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using LoteriaApp.WebApi.Utility;
-using Numerito.API.Data.Entities;
 using Numerito.API.Data;
-using Numerito.API.Services.Numeros.NumeroDto;
-using Numerito.API.Utility;
+using Numerito.API.Data.Entities;
 using Numerito.API.Services.Numeros;
-using System.Drawing;
+using Numerito.API.Utility;
 
 namespace Numerito.API.Services.Reportes
 {

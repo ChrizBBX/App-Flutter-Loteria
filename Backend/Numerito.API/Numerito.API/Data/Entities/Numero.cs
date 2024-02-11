@@ -1,6 +1,4 @@
 ﻿using Numerito.API.Utitily.Scaffolding;
-using System;
-using System.Collections.Generic;
 
 namespace Numerito.API.Data.Entities;
 

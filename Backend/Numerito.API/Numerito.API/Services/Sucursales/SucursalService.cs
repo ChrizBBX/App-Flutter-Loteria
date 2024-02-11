@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 using Numerito.API.Data;
 using Numerito.API.Data.Entities;
-using Numerito.API.Services.Numeros;
 using Numerito.API.Utility;
 
 namespace Numerito.API.Services.Sucursales
@@ -26,8 +24,8 @@ namespace Numerito.API.Services.Sucursales
             var result = (from Sucursal in _context.Sucursales.AsQueryable().Where(x => x.Estado == true)
                           select new Sucursal
                           {
-                            SucursalId = Sucursal.SucursalId,
-                            Nombre = Sucursal.Nombre,
+                              SucursalId = Sucursal.SucursalId,
+                              Nombre = Sucursal.Nombre,
                           }
                           ).ToList();
 

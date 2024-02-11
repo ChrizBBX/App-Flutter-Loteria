@@ -1,6 +1,4 @@
 ﻿using FluentValidation;
-using System;
-using System.Collections.Generic;
 
 namespace Numerito.API.Data.Entities;
 

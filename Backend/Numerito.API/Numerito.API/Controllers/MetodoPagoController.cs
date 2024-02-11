@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Numerito.API.Services.MetodosPagos;
-using Microsoft.AspNetCore.Http;
 
 namespace Numerito.API.Controllers
 {

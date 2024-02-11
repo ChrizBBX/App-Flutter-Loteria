@@ -6,7 +6,7 @@ namespace Numerito.API.Services.MetodosPagos
 {
     public class MetodoPagoRules
     {
-        public Result<bool> ValidarMetodoPagoId(List<MetodosPago> listaMetodosPago,int metodoPagoId)
+        public Result<bool> ValidarMetodoPagoId(List<MetodosPago> listaMetodosPago, int metodoPagoId)
         {
             var result = listaMetodosPago.FirstOrDefault(x => x.MetodoPagoId == metodoPagoId);
 

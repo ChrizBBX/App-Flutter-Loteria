@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Numerito.API.Services.Numeros;
 using Numerito.API.Services.Reportes;
 
 namespace Numerito.API.Controllers
 {
-        [Route("api/[controller]")]
-        [ApiController]
+    [Route("api/[controller]")]
+    [ApiController]
     public class ReporteController : ControllerBase
     {
 
-        private readonly ReportesService _reportesService ;
+        private readonly ReportesService _reportesService;
 
         public ReporteController(ReportesService reportesService)
         {

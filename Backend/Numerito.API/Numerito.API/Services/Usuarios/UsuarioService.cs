@@ -1,16 +1,11 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
-using LoteriaApp.WebApi.Data.EntityContext;
 using LoteriaApp.WebApi.Services.Usuarios.UsuarioDto;
 using LoteriaApp.WebApi.Utility;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Any;
 using Numerito.API.Data;
 using Numerito.API.Data.Entities;
-using Numerito.API.Services.Usuarios.UsuariosDto;
 using Numerito.API.Utility;
-using Numerito.API.Data.Entities;
 using static Numerito.API.Data.Entities.Usuario;
 
 
@@ -37,7 +32,7 @@ namespace Numerito.API.Services.Usuarios
                           {
                               UsuarioId = Usuario.UsuarioId,
                               NombreUsuario = Usuario.NombreUsuario,
-                              
+
                               PersonaId = Usuario.PersonaId,
                               SucursalId = Usuario.SucursalId,
                               Admin = Usuario.Admin,
@@ -57,8 +52,11 @@ namespace Numerito.API.Services.Usuarios
             Encrypt encrypt = new Encrypt();
             var password = encrypt.HashPassword(entidad.Contrasena);
 
-            var result = (from usuario in _context.Usuarios
-                          join pago in _context.Pagos on usuario.UsuarioId equals pago.UsuarioId 
+            List<Usuario> listaUsuarios = _context.Usuarios.ToList();
+            var result = (from usuario in listaUsuarios
+                          join pago in _context.Pagos
+                              on usuario.UsuarioId equals pago.UsuarioId into pagosJoin
+                          from pago in pagosJoin.DefaultIfEmpty()
                           where usuario.NombreUsuario == entidad.NombreUsuario && usuario.Contrasena == password
                           select new UsuarioDto
                           {
@@ -66,9 +64,9 @@ namespace Numerito.API.Services.Usuarios
                               NombreUsuario = usuario.NombreUsuario,
                               PersonaId = usuario.PersonaId,
                               Admin = usuario.Admin,
-                              FechaSus = pago.FechaVencimiento 
-                              
+                              FechaSus = pago != null ? pago.FechaVencimiento : (DateTime?)null
                           }).ToList();
+
 
 
             if (result.Count < 1)
@@ -107,10 +105,10 @@ namespace Numerito.API.Services.Usuarios
                 return Result<string>.Fault(menssageValidation, OutputMessage.FaultEntityUsuario);
             }
 
-           var listaUsuarios = _context.Usuarios.AsQueryable().Where(x => x.Estado == true).ToList();
-           var listaPersonas = _context.Personas.AsQueryable().Where(x => x.Estado == true).ToList();
-           var listaSucursales = _context.Sucursales.AsQueryable().Where(x => x.Estado == true).ToList();
-           var validaciones = _rules.AgregarUsuarioValidaciones(usuario, listaPersonas,listaUsuarios,listaSucursales);
+            var listaUsuarios = _context.Usuarios.AsQueryable().Where(x => x.Estado == true).ToList();
+            var listaPersonas = _context.Personas.AsQueryable().Where(x => x.Estado == true).ToList();
+            var listaSucursales = _context.Sucursales.AsQueryable().Where(x => x.Estado == true).ToList();
+            var validaciones = _rules.AgregarUsuarioValidaciones(usuario, listaPersonas, listaUsuarios, listaSucursales);
 
             if (!validaciones.Ok)
                 return Result<string>.Fault(validaciones.Message);
@@ -133,11 +131,10 @@ namespace Numerito.API.Services.Usuarios
             UsuarioValidations validator = new UsuarioValidations();
             validator.RuleFor(x => x.UsuarioModificacion).NotEmpty().WithMessage("Campo UsuarioModificacion Invalido");
 
+            //var listaUsuarios = _context.Usuarios.AsQueryable().ToList();
+            List<Usuario> listaUsuarios = _context.Usuarios.ToList();
 
 
-            var listaUsuarios = _context.Usuarios.AsQueryable().ToList().Where(x => x.Estado == true);
-
-            
             var usuario = listaUsuarios.FirstOrDefault(x => x.UsuarioId == entidad.UsuarioId);
             if (usuario == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);
 
@@ -204,8 +201,8 @@ namespace Numerito.API.Services.Usuarios
         public Result<string> EditarImagen(UsuarioDto entidad)
         {
             var listaUsuarios = _context.Usuarios.AsQueryable().ToList();
-            
-            
+
+
 
             var usuario = listaUsuarios.FirstOrDefault(x => x.UsuarioId == entidad.UsuarioId);
             if (usuario == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);

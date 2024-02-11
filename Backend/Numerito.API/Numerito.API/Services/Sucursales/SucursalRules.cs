@@ -8,7 +8,7 @@ namespace Numerito.API.Services.Sucursales
     {
         public Result<bool> VerificarSucursalUsuario(List<Sucursal> listaSucursales, int? sucursalId)
         {
-            if(sucursalId == 0)
+            if (sucursalId == 0)
                 return Result<bool>.Success(true);
 
             var result = listaSucursales.FirstOrDefault(x => x.SucursalId == sucursalId);

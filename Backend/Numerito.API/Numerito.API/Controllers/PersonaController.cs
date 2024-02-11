@@ -1,10 +1,6 @@
-﻿using LoteriaApp.WebApi.Services.Usuarios.UsuarioDto;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Numerito.API.Data.Entities;
+﻿using Microsoft.AspNetCore.Mvc;
 using Numerito.API.Services.Personas;
 using Numerito.API.Services.Personas.PersonasDtos;
-using Numerito.API.Services.Usuarios;
 
 namespace Numerito.API.Controllers
 {
@@ -12,40 +8,40 @@ namespace Numerito.API.Controllers
     [ApiController]
     public class PersonaController : ControllerBase
     {
-            private readonly PersonaService _PersonaService;
+        private readonly PersonaService _PersonaService;
 
-            public PersonaController(PersonaService PersonaService)
-            {
-                _PersonaService = PersonaService;
-            }
+        public PersonaController(PersonaService PersonaService)
+        {
+            _PersonaService = PersonaService;
+        }
 
 
-            [HttpGet("Listado")]
-            public IActionResult Listado()
-            {
-                var result = _PersonaService.Listado();
-                return Ok(result);
-            }
+        [HttpGet("Listado")]
+        public IActionResult Listado()
+        {
+            var result = _PersonaService.Listado();
+            return Ok(result);
+        }
 
-            [HttpPost("AgregarPersona")]
-            public IActionResult AgregarPersona(PersonaDto entidad)
-            {
-                var result = _PersonaService.AgregarPersona(entidad);
-                return Ok(result);
-            }
+        [HttpPost("AgregarPersona")]
+        public IActionResult AgregarPersona(PersonaDto entidad)
+        {
+            var result = _PersonaService.AgregarPersona(entidad);
+            return Ok(result);
+        }
 
-            [HttpPut("EditarPersona")]
-            public IActionResult EditarPersona(PersonaDto entidad)
-            {
-                var result = _PersonaService.EditarPersona(entidad);
-                return Ok(result);
-            }
+        [HttpPut("EditarPersona")]
+        public IActionResult EditarPersona(PersonaDto entidad)
+        {
+            var result = _PersonaService.EditarPersona(entidad);
+            return Ok(result);
+        }
 
-            [HttpPut("DesactivarPersona")]
-            public IActionResult DesactivarPersona(int PersonaId)
-            {
-                var result = _PersonaService.DesactivarPersona(PersonaId);
-                return Ok(result);
-            }
+        [HttpPut("DesactivarPersona")]
+        public IActionResult DesactivarPersona(int PersonaId)
+        {
+            var result = _PersonaService.DesactivarPersona(PersonaId);
+            return Ok(result);
+        }
     }
 }

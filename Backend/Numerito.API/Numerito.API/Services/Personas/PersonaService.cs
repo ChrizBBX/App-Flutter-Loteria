@@ -1,17 +1,12 @@
 ﻿using AutoMapper;
 using FluentValidation;
 using FluentValidation.Results;
-using LoteriaApp.WebApi.Data.EntityContext;
-using LoteriaApp.WebApi.Services.Usuarios.UsuarioDto;
 using LoteriaApp.WebApi.Utility;
-using Microsoft.EntityFrameworkCore;
 using Numerito.API.Data;
 using Numerito.API.Data.Entities;
 using Numerito.API.Services.Personas.PersonasDtos;
 using Numerito.API.Utility;
-using Numerito.API.Utitily.Scaffolding;
 using static Numerito.API.Data.Entities.Persona;
-using static Numerito.API.Data.Entities.Usuario;
 
 namespace Numerito.API.Services.Personas
 {
@@ -29,7 +24,7 @@ namespace Numerito.API.Services.Personas
         }
         public Result<List<Persona>> Listado()
         {
-            
+
             var result = (from Persona in _context.Personas.AsQueryable().Where(x => x.Estado == true)
                           select new Persona
                           {
@@ -53,7 +48,7 @@ namespace Numerito.API.Services.Personas
 
         public Result<string> AgregarPersona(PersonaDto entidad)
         {
-            
+
             Persona persona = new Persona()
             {
                 Nombres = entidad.Nombres,
@@ -64,7 +59,7 @@ namespace Numerito.API.Services.Personas
                 Direccion = entidad.Direccion,
                 UsuarioCreacion = entidad.UsuarioCreacion,
                 FechaCreacion = entidad.FechaCreacion
-                
+
             };
 
             PersonaValidations validator = new PersonaValidations();
@@ -96,10 +91,10 @@ namespace Numerito.API.Services.Personas
         public Result<string> EditarPersona(PersonaDto entidad)
         {
             var listaPersonas = _context.Personas.AsQueryable().ToList();
-            
+
             var persona = listaPersonas.FirstOrDefault(x => x.PersonaId == entidad.PersonaId);
             if (persona == null) return Result<string>.Fault(OutputMessage.FaultPersonaNotExists);
-            
+
             var identidad = listaPersonas.FirstOrDefault(x => x.Identidad == entidad.Identidad && x.PersonaId != entidad.PersonaId);
             if (identidad != null) return Result<string>.Fault(OutputMessage.FaultPersonaIdentidadExists);
 
@@ -124,7 +119,7 @@ namespace Numerito.API.Services.Personas
         {
 
             var listaUsuarios = _context.Personas.AsQueryable().ToList();
-            
+
             var persona = listaUsuarios.FirstOrDefault(x => x.PersonaId == PersonaId);
             if (persona == null) return Result<string>.Fault(OutputMessage.FaultUsuarioNotExists);
 

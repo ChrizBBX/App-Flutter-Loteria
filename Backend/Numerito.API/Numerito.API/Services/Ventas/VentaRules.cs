@@ -4,7 +4,6 @@ using Numerito.API.Services.MetodosPagos;
 using Numerito.API.Services.Personas;
 using Numerito.API.Services.Usuarios;
 using Numerito.API.Utility;
-using System.Net;
 
 namespace Numerito.API.Services.Ventas
 {
@@ -14,7 +13,7 @@ namespace Numerito.API.Services.Ventas
         UsuarioRules usuarioRules = new UsuarioRules();
         MetodoPagoRules metodoPagoRules = new MetodoPagoRules();
 
-        public Result<bool> ValidacionesAgregarVenta(Venta entidad, List<Persona> listaPersonas,List<Usuario> listaUsuarios,List<MetodosPago> listaMetodosPago)
+        public Result<bool> ValidacionesAgregarVenta(Venta entidad, List<Persona> listaPersonas, List<Usuario> listaUsuarios, List<MetodosPago> listaMetodosPago)
         {
             Result<bool> validacionPersonaId = personaRules.VerificarPersonaId(listaPersonas, entidad.PersonaId);
             if (!validacionPersonaId.Ok)

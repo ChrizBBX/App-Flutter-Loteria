@@ -6,7 +6,7 @@
 
         public string NombreUsuario { get; set; } = null!;
 
-        public DateTime FechaSus { get; set; }
+        public DateTime? FechaSus { get; set; } 
 
 
         public string? Contrasena { get; set; }

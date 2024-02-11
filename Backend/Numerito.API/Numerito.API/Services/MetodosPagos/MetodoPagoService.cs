@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using LoteriaApp.WebApi.Utility;
 using Numerito.API.Data;
 using Numerito.API.Data.Entities;
 using Numerito.API.Utility;

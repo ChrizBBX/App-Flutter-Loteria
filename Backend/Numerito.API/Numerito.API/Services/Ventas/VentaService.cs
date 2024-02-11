@@ -1,5 +1,4 @@
 ﻿using FluentValidation.Results;
-using LoteriaApp.WebApi.Data.EntityContext;
 using LoteriaApp.WebApi.Utility;
 using Numerito.API.Data;
 using Numerito.API.Data.Entities;
@@ -14,10 +13,10 @@ namespace Numerito.API.Services.Ventas
     {
         private readonly NumeritoContext _context;
         private readonly VentaRules _ventaRules;
-        public VentaService(NumeritoContext context,VentaRules ventaRules)
+        public VentaService(NumeritoContext context, VentaRules ventaRules)
         {
-                _context = context;
-                _ventaRules = ventaRules;
+            _context = context;
+            _ventaRules = ventaRules;
         }
         public Result<string> AgregarVenta(VentaDtoC entidad)
         {
@@ -55,7 +54,7 @@ namespace Numerito.API.Services.Ventas
                 var listaMetodosPago = _context.MetodosPagos.AsQueryable().ToList();
                 var listaNumeros = _context.Numeros.AsQueryable().ToList();
 
-                var validaciones = _ventaRules.ValidacionesAgregarVenta(venta, listaPersonas,listaUsuarios,listaMetodosPago);
+                var validaciones = _ventaRules.ValidacionesAgregarVenta(venta, listaPersonas, listaUsuarios, listaMetodosPago);
                 if (!validaciones.Ok)
                     return Result<string>.Fault(validaciones.Message);
 
@@ -64,7 +63,7 @@ namespace Numerito.API.Services.Ventas
 
                 int nuevoID = venta.VentaId;
 
-                foreach ( var item in entidad.VentaDetalles)
+                foreach (var item in entidad.VentaDetalles)
                 {
                     var validacionesDetalle = _ventaRules.ValidarNumero(listaNumeros, item.NumeroId, item.Valor);
                     if (!validacionesDetalle.Ok)
@@ -109,7 +108,7 @@ namespace Numerito.API.Services.Ventas
                 return Result<string>.Fault(OutputMessage.Error);
             }
         }
-        
+
         public Result<List<VentaCompleta>> GenerarFactura(int? ID)
         {
             var result = (from ventaDetalle in _context.VentaDetalles

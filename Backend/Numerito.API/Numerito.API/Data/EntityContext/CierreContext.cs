@@ -6,7 +6,7 @@ namespace Numerito.API.Data.EntityContext
 {
     public class CierreContext : IEntityTypeConfiguration<Cierre>
     {
-        public void Configure(EntityTypeBuilder<Cierre> builder) 
+        public void Configure(EntityTypeBuilder<Cierre> builder)
         {
             builder.ToTable("Cierres");
             builder.HasKey(e => e.CierreId).HasName("PK_Cierres_CierreId");

@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Numerito.API.Data.Entities;
 using Numerito.API.Services.Numeros;
 using Numerito.API.Services.Numeros.NumeroDto;
 

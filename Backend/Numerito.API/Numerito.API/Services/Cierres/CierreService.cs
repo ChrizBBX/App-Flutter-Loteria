@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
 using FluentValidation.Results;
-using LoteriaApp.WebApi.Data.EntityContext;
 using LoteriaApp.WebApi.Utility;
-using Microsoft.EntityFrameworkCore;
 using Numerito.API.Data;
-using Numerito.API.Data.Entities;
 using Numerito.API.Services.Cierres.CierreDtos;
 using Numerito.API.Utility;
 using Numerito.API.Utitily.Scaffolding;
-using static Numerito.API.Data.Entities.Venta;
 using static Numerito.API.Services.Reportes.ReportesService;
 using static Numerito.API.Utitily.Scaffolding.Cierre;
 
@@ -20,7 +16,7 @@ namespace Numerito.API.Services.Cierres
         private readonly CierreRules _cierreRules;
         private readonly IMapper _mapper;
 
-        public CierreService(NumeritoContext context, CierreRules cierreRules,IMapper mapper)
+        public CierreService(NumeritoContext context, CierreRules cierreRules, IMapper mapper)
         {
             _context = context;
             _cierreRules = cierreRules;
@@ -99,8 +95,8 @@ namespace Numerito.API.Services.Cierres
             switch (id)
             {
                 case 1:
-                     horaInicio = new TimeSpan(6, 0, 0);
-                     horaFin = new TimeSpan(10, 50, 0);
+                    horaInicio = new TimeSpan(6, 0, 0);
+                    horaFin = new TimeSpan(10, 50, 0);
                     break;
                 case 2:
                     horaInicio = new TimeSpan(11, 10, 0);
@@ -160,7 +156,7 @@ namespace Numerito.API.Services.Cierres
         {
 
             var listaCierres = _context.Cierres.AsQueryable().ToList();
-            
+
             var cierre = listaCierres.FirstOrDefault(x => x.CierreId == id);
             if (cierre == null) return Result<string>.Fault(OutputMessage.FaultCierreNotExists);
 

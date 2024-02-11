@@ -9,7 +9,7 @@ namespace Numerito.API.Services.Cierres
     public class CierreRules
     {
         UsuarioRules usuarioRules = new UsuarioRules();
-        public Result<bool> AgregarCierreValidaciones(List<Cierre> listaCierres, List<Usuario> listaUsuarios,List<Numero> listaNumeros,Cierre entidad)
+        public Result<bool> AgregarCierreValidaciones(List<Cierre> listaCierres, List<Usuario> listaUsuarios, List<Numero> listaNumeros, Cierre entidad)
         {
             Result<bool> verificarUsuarioId = usuarioRules.VerificarUsuarioId(listaUsuarios, entidad.UsuarioId);
             if (!verificarUsuarioId.Ok)

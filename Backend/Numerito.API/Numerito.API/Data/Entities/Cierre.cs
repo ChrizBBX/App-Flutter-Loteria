@@ -1,7 +1,5 @@
 ﻿using FluentValidation;
 using Numerito.API.Data.Entities;
-using System;
-using System.Collections.Generic;
 
 namespace Numerito.API.Utitily.Scaffolding;
 
@@ -23,7 +21,7 @@ public partial class Cierre
     {
         public CierreValidations()
         {
-           // RuleFor(x => x.NumeroId).NotEmpty().WithMessage("El numero no puede estar vacio");
+            // RuleFor(x => x.NumeroId).NotEmpty().WithMessage("El numero no puede estar vacio");
             RuleFor(x => x.UsuarioId).NotEmpty().WithMessage("El usuario no puede estar vacio");
             RuleFor(x => x.FechaCierre).NotEmpty().WithMessage("La fecha de cierre no es valida");
         }
