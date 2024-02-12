@@ -43,15 +43,24 @@ Future<void> fetchData(
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setInt('usuarioId', data[0]['usuarioId']);
         prefs.setString('nombreUsuario', data[0]['nombreUsuario'].toString());
-        prefs.setString('imagen', /* data[0]['imagen'].toString()*/ 'https://64.media.tumblr.com/6a5a68b858b592f3bc84d2e7f4be90bb/8a8beb1bdd1ae19a-48/s1280x1920/38303321aed4091d34600f8d9147378d46b29d35.jpg');
+        prefs.setString('imagen',
+            /* data[0]['imagen'].toString()*/ 'https://64.media.tumblr.com/6a5a68b858b592f3bc84d2e7f4be90bb/8a8beb1bdd1ae19a-48/s1280x1920/38303321aed4091d34600f8d9147378d46b29d35.jpg');
         prefs.setInt('sucursalId', data[0]['sucursalId'] ?? 0);
         prefs.setInt('personaId', data[0]['personaId'] ?? 0);
-        prefs.setString('fechaSus', data[0]['fechaSus'] ?? '');
+        if (data[0]['fechaSus'] != null) {
+          DateTime fechaActual = DateTime.now();
+
+          DateTime fechaSus = DateTime.parse(data[0]['fechaSus']);
+
+          if (fechaSus.isBefore(fechaActual)) {
+            prefs.setString('fechaSus', data[0]['fechaSus']);
+          }
+        }
 
         bool adminValue = data[0]['admin'];
         int adminIntValue = adminValue ? 1 : 0;
         prefs.setInt('admin', adminIntValue);
-
+        print(data);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

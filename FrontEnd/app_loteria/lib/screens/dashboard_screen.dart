@@ -128,6 +128,7 @@ class _CardListWidgetState extends State<CardListWidget> {
                   icon: Icons.person,
                 ),
               ),
+              
               GestureDetector(
                 onTap: () {
                   Navigator.push(
@@ -155,12 +156,12 @@ class _CardListWidgetState extends State<CardListWidget> {
     return formattedTime;
   }
 }
+
 opciones(BuildContext context, DateTime fechaSus) {
   showDialog(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        contentPadding: const EdgeInsets.all(0),
         content: SingleChildScrollView(
           child: Column(
             children: [
@@ -175,11 +176,12 @@ opciones(BuildContext context, DateTime fechaSus) {
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 20),
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          width: 1,
+                          width: 0.5,
                           color: Colors.grey.shade300,
                         ),
                       ),
@@ -206,11 +208,12 @@ opciones(BuildContext context, DateTime fechaSus) {
                   _mostrarSelectorFechas(context, 2);
                 },
                 child: Container(
-                  padding: const EdgeInsets.all(20),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
                   decoration: BoxDecoration(
                     border: Border(
                       bottom: BorderSide(
-                        width: 1,
+                        width: 0.5,
                         color: Colors.grey.shade300,
                       ),
                     ),
@@ -238,11 +241,12 @@ opciones(BuildContext context, DateTime fechaSus) {
                     _mostrarSelectorFechas(context, 3);
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 20),
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          width: 1,
+                          width: 0.5,
                           color: Colors.grey.shade300,
                         ),
                       ),
@@ -275,11 +279,12 @@ opciones(BuildContext context, DateTime fechaSus) {
                     );
                   },
                   child: Container(
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 15, horizontal: 20),
                     decoration: BoxDecoration(
                       border: Border(
                         bottom: BorderSide(
-                          width: 1,
+                          width: 0.5,
                           color: Colors.grey.shade300,
                         ),
                       ),
